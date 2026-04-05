@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FullIPTV - Yönetim Paneli</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f1117;--card:#1a1d27;--border:#2a2d37;--accent:#6366f1;--accent2:#818cf8;--green:#22c55e;--red:#ef4444;--amber:#f59e0b;--text:#e5e7eb;--muted:#9ca3af;--input:#252836}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;width:380px;text-align:center}
+.login-box h1{font-size:28px;margin-bottom:8px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.login-box p{color:var(--muted);margin-bottom:24px;font-size:14px}
+input,select,textarea{width:100%;padding:10px 14px;background:var(--input);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;outline:none;margin-bottom:12px}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+button,.btn{padding:10px 20px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;transition:.2s}
+button:hover,.btn:hover{background:var(--accent2)}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-danger{background:var(--red)}
+.btn-success{background:var(--green)}
+.btn-amber{background:var(--amber);color:#000}
+
+.app{display:none}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:220px;background:var(--card);border-right:1px solid var(--border);padding:20px 0}
+.sidebar h2{padding:0 20px;font-size:20px;margin-bottom:24px;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-item{display:block;padding:10px 20px;color:var(--muted);text-decoration:none;font-size:14px;cursor:pointer;transition:.2s;border-left:3px solid transparent}
+.nav-item:hover,.nav-item.active{color:var(--text);background:rgba(99,102,241,0.1);border-left-color:var(--accent)}
+.main{margin-left:220px;padding:24px}
+.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px}
+.header h1{font-size:24px}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px}
+.stat-card .num{font-size:32px;font-weight:700;color:var(--accent)}
+.stat-card .label{color:var(--muted);font-size:13px;margin-top:4px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:20px}
+.card h3{margin-bottom:16px;font-size:16px}
+
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:rgba(34,197,94,0.15);color:var(--green)}
+.badge-red{background:rgba(239,68,68,0.15);color:var(--red)}
+.badge-amber{background:rgba(245,158,11,0.15);color:var(--amber)}
+
+.code-display{background:var(--input);border:1px solid var(--border);border-radius:8px;padding:12px;font-family:monospace;font-size:16px;letter-spacing:2px;text-align:center;margin:8px 0;user-select:all;cursor:pointer;color:var(--accent2)}
+.code-list{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+
+.form-row{display:flex;gap:12px;margin-bottom:12px}
+.form-row>*{flex:1}
+
+.tab-bar{display:flex;gap:4px;margin-bottom:16px}
+.tab{padding:8px 16px;background:transparent;border:1px solid var(--border);border-radius:8px;color:var(--muted);cursor:pointer;font-size:13px}
+.tab.active{background:var(--accent);border-color:var(--accent);color:#fff}
+
+.section{display:none}
+.section.active{display:block}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:100;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;width:500px;max-width:90vw;max-height:80vh;overflow-y:auto}
+.modal h3{margin-bottom:16px}
+
+@media(max-width:768px){.sidebar{width:60px}.sidebar h2,.nav-text{display:none}.main{margin-left:60px;padding:16px}.stats{grid-template-columns:1fr 1fr}.form-row{flex-direction:column}}
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-wrap" id="loginPage">
+  <div class="login-box">
+    <h1>FullIPTV</h1>
+    <p>Yönetim Paneli</p>
+    <input type="text" id="loginUser" placeholder="Kullanıcı adı" value="admin">
+    <input type="password" id="loginPass" placeholder="Şifre">
+    <button onclick="login()" style="width:100%">Giriş Yap</button>
+    <p id="loginError" style="color:var(--red);margin-top:12px;font-size:13px"></p>
+  </div>
+</div>
+
+<!-- App -->
+<div class="app" id="app">
+  <div class="sidebar">
+    <h2>FullIPTV</h2>
+    <a class="nav-item active" onclick="showSection('dashboard')">📊 <span class="nav-text">Dashboard</span></a>
+    <a class="nav-item" onclick="showSection('codes')">🔑 <span class="nav-text">Kodlar</span></a>
+    <a class="nav-item" onclick="showSection('devices')">📱 <span class="nav-text">Cihazlar</span></a>
+    <a class="nav-item" onclick="showSection('channels')">📺 <span class="nav-text">Kanallar</span></a>
+    <a class="nav-item" onclick="showSection('vod')">🎬 <span class="nav-text">VOD</span></a>
+    <a class="nav-item" onclick="showSection('import')">📥 <span class="nav-text">M3U İçe Aktar</span></a>
+    <a class="nav-item" onclick="showSection('settings')">⚙️ <span class="nav-text">Ayarlar</span></a>
+    <a class="nav-item" onclick="logout()" style="position:absolute;bottom:20px">🚪 <span class="nav-text">Çıkış</span></a>
+  </div>
+
+  <div class="main">
+    <!-- Dashboard -->
+    <div class="section active" id="sec-dashboard">
+      <div class="header"><h1>Dashboard</h1><span id="serverUrl" style="color:var(--muted);font-size:13px"></span></div>
+      <div class="stats" id="statsGrid"></div>
+      <div class="card">
+        <h3>Son Aktif Cihazlar</h3>
+        <table><thead><tr><th>Cihaz</th><th>Tür</th><th>Kod</th><th>Son Görülme</th><th>Süre Bitiş</th></tr></thead><tbody id="recentDevices"></tbody></table>
+      </div>
+    </div>
+
+    <!-- Codes -->
+    <div class="section" id="sec-codes">
+      <div class="header"><h1>Aktivasyon Kodları</h1></div>
+      <div class="card">
+        <h3>Yeni Kod Üret</h3>
+        <div class="form-row">
+          <div><label style="font-size:12px;color:var(--muted)">Adet</label><input type="number" id="codeCount" value="1" min="1" max="100"></div>
+          <div><label style="font-size:12px;color:var(--muted)">Süre (gün)</label><input type="number" id="codeDuration" value="365"></div>
+          <div><label style="font-size:12px;color:var(--muted)">Max Cihaz</label><input type="number" id="codeMaxDev" value="1" min="1" max="10"></div>
+        </div>
+        <input type="text" id="codeNote" placeholder="Not (opsiyonel) - örn: G-Han Hotel Oda 301">
+        <button onclick="generateCodes()">Kod Üret</button>
+        <div id="generatedCodes"></div>
+      </div>
+      <div class="card">
+        <h3>Tüm Kodlar</h3>
+        <table><thead><tr><th>Kod</th><th>Süre</th><th>Max Cihaz</th><th>Durum</th><th>Not</th><th>Tarih</th><th></th></tr></thead><tbody id="codesTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- Devices -->
+    <div class="section" id="sec-devices">
+      <div class="header"><h1>Cihazlar</h1></div>
+      <div class="card">
+        <table><thead><tr><th>Cihaz ID</th><th>İsim</th><th>Tür</th><th>Kod</th><th>Aktifleşme</th><th>Bitiş</th><th>Durum</th><th></th></tr></thead><tbody id="devicesTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- Channels -->
+    <div class="section" id="sec-channels">
+      <div class="header"><h1>Kanallar</h1><button onclick="showAddChannel()">+ Kanal Ekle</button></div>
+      <div class="card">
+        <table><thead><tr><th>ID</th><th>Kanal</th><th>Grup</th><th>Durum</th><th></th></tr></thead><tbody id="channelsTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- VOD -->
+    <div class="section" id="sec-vod">
+      <div class="header"><h1>Film & Dizi (VOD)</h1><button onclick="showAddVod()">+ VOD Ekle</button></div>
+      <div class="card">
+        <table><thead><tr><th>ID</th><th>Başlık</th><th>Kategori</th><th>Yıl</th><th></th></tr></thead><tbody id="vodTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- Import -->
+    <div class="section" id="sec-import">
+      <div class="header"><h1>M3U İçe Aktar</h1></div>
+      <div class="card">
+        <h3>M3U Playlist Yapıştır</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:12px">Ücretsiz Türk kanalları: https://iptv-org.github.io/iptv/countries/tr.m3u</p>
+        <textarea id="m3uContent" rows="10" placeholder="#EXTM3U
+#EXTINF:-1 group-title=&quot;Ulusal&quot;,Kanal Adı
+http://stream-url.m3u8"></textarea>
+        <button onclick="importM3U()">İçe Aktar</button>
+        <p id="importResult" style="margin-top:12px;color:var(--green)"></p>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div class="section" id="sec-settings">
+      <div class="header"><h1>Ayarlar</h1></div>
+      <div class="card">
+        <h3>Bağlantı Bilgileri</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:12px">TV uygulamalarını bu bilgilerle yapılandırın:</p>
+        <div style="background:var(--input);padding:16px;border-radius:8px;font-family:monospace;font-size:13px;line-height:2">
+          <div>Sunucu: <span style="color:var(--accent2)" id="setServer"></span></div>
+          <div>Player API: <span style="color:var(--accent2)" id="setApi"></span></div>
+          <div>M3U URL: <span style="color:var(--accent2)" id="setM3u"></span></div>
+          <div>Xtream Kullanıcı: <span style="color:var(--muted)">[DEVICE_ID]</span></div>
+          <div>Xtream Şifre: <span style="color:var(--muted)">[ACTIVATION_CODE]</span></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Şifre Değiştir</h3>
+        <input type="password" id="newPass" placeholder="Yeni şifre">
+        <button onclick="alert('Şifre değiştirme özelliği yakında')">Güncelle</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Add Channel Modal -->
+<div class="modal-overlay" id="channelModal">
+  <div class="modal">
+    <h3>Kanal Ekle</h3>
+    <input type="text" id="chName" placeholder="Kanal adı">
+    <input type="text" id="chUrl" placeholder="Stream URL (m3u8/ts)">
+    <input type="text" id="chLogo" placeholder="Logo URL (opsiyonel)">
+    <input type="text" id="chGroup" placeholder="Grup (örn: Ulusal, Spor)" value="Genel">
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeModal('channelModal')" style="background:var(--border)">İptal</button>
+      <button onclick="addChannel()">Ekle</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add VOD Modal -->
+<div class="modal-overlay" id="vodModal">
+  <div class="modal">
+    <h3>VOD Ekle</h3>
+    <input type="text" id="vodTitle" placeholder="Film/Dizi adı">
+    <input type="text" id="vodUrl" placeholder="Stream URL">
+    <input type="text" id="vodPoster" placeholder="Poster URL (opsiyonel)">
+    <input type="text" id="vodCategory" placeholder="Kategori" value="Film">
+    <textarea id="vodDesc" rows="3" placeholder="Açıklama (opsiyonel)"></textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button onclick="closeModal('vodModal')" style="background:var(--border)">İptal</button>
+      <button onclick="addVod()">Ekle</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+let TOKEN = localStorage.getItem('fulliptv_token');
+
+async function api(path, opts = {}) {
+  const headers = { 'Content-Type': 'application/json' };
+  if (TOKEN) headers['Authorization'] = 'Bearer ' + TOKEN;
+  const r = await fetch(API + path, { ...opts, headers });
+  if (r.status === 401) { logout(); return null; }
+  return r.json();
+}
+
+async function login() {
+  const r = await api('/api/admin/login', { method: 'POST', body: JSON.stringify({ username: E('loginUser').value, password: E('loginPass').value }) });
+  if (r?.token) { TOKEN = r.token; localStorage.setItem('fulliptv_token', TOKEN); showApp(); }
+  else E('loginError').textContent = r?.error || 'Giriş başarısız';
+}
+
+function logout() { TOKEN = null; localStorage.removeItem('fulliptv_token'); location.reload(); }
+function E(id) { return document.getElementById(id); }
+function showApp() { E('loginPage').style.display = 'none'; E('app').style.display = 'block'; loadDashboard(); }
+
+function showSection(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  E('sec-' + name).classList.add('active');
+  event.target.closest('.nav-item').classList.add('active');
+  if (name === 'dashboard') loadDashboard();
+  if (name === 'codes') loadCodes();
+  if (name === 'devices') loadDevices();
+  if (name === 'channels') loadChannels();
+  if (name === 'vod') loadVod();
+  if (name === 'settings') { E('setServer').textContent = API; E('setApi').textContent = API + '/player_api.php'; E('setM3u').textContent = API + '/get.php?username=DEVICE_ID&password=CODE&type=m3u_plus'; }
+}
+
+async function loadDashboard() {
+  const s = await api('/api/admin/stats');
+  if (!s) return;
+  E('statsGrid').innerHTML = `
+    <div class="stat-card"><div class="num">${s.activeDevices}</div><div class="label">Aktif Cihaz</div></div>
+    <div class="stat-card"><div class="num">${s.availableCodes}</div><div class="label">Kullanılabilir Kod</div></div>
+    <div class="stat-card"><div class="num">${s.totalChannels}</div><div class="label">Kanal</div></div>
+    <div class="stat-card"><div class="num">${s.totalVod}</div><div class="label">Film/Dizi</div></div>
+  `;
+  E('recentDevices').innerHTML = (s.recentDevices || []).map(d => `<tr><td>${d.device_name||d.device_id}</td><td>${d.device_type}</td><td><code>${d.activation_code}</code></td><td>${fmtDate(d.last_seen)}</td><td>${fmtDate(d.expires_at)}</td></tr>`).join('');
+  E('serverUrl').textContent = API;
+}
+
+async function generateCodes() {
+  const r = await api('/api/admin/codes/generate', { method: 'POST', body: JSON.stringify({ count: +E('codeCount').value, duration_days: +E('codeDuration').value, max_devices: +E('codeMaxDev').value, note: E('codeNote').value }) });
+  if (r?.codes) {
+    E('generatedCodes').innerHTML = '<div style="margin-top:16px"><strong>' + r.generated + ' kod üretildi:</strong></div><div class="code-list">' + r.codes.map(c => `<div class="code-display" onclick="navigator.clipboard.writeText('${c.code}')" title="Kopyalamak için tıkla">${c.code}</div>`).join('') + '</div>';
+    loadCodes();
+  }
+}
+
+async function loadCodes() {
+  const codes = await api('/api/admin/codes');
+  if (!codes) return;
+  E('codesTable').innerHTML = codes.map(c => `<tr>
+    <td><code style="color:var(--accent2);cursor:pointer" onclick="navigator.clipboard.writeText('${c.code}')" title="Kopyala">${c.code}</code></td>
+    <td>${c.duration_days} gün</td><td>${c.max_devices}</td>
+    <td>${c.is_used ? '<span class="badge badge-amber">Kullanıldı</span>' : '<span class="badge badge-green">Müsait</span>'}</td>
+    <td style="color:var(--muted);font-size:12px">${c.note||'-'}</td>
+    <td>${fmtDate(c.created_at)}</td>
+    <td><button class="btn-sm btn-danger" onclick="deleteCode(${c.id})">Sil</button></td>
+  </tr>`).join('');
+}
+
+async function deleteCode(id) { if (confirm('Bu kodu silmek istediğinize emin misiniz?')) { await api('/api/admin/codes/' + id, { method: 'DELETE' }); loadCodes(); } }
+
+async function loadDevices() {
+  const devs = await api('/api/admin/devices');
+  if (!devs) return;
+  E('devicesTable').innerHTML = devs.map(d => {
+    const expired = new Date(d.expires_at) < new Date();
+    return `<tr>
+      <td><code style="font-size:11px">${d.device_id.substring(0,16)}...</code></td>
+      <td>${d.device_name}</td><td>${d.device_type}</td>
+      <td><code>${d.activation_code}</code></td>
+      <td>${fmtDate(d.activated_at)}</td><td>${fmtDate(d.expires_at)}</td>
+      <td>${d.is_active && !expired ? '<span class="badge badge-green">Aktif</span>' : '<span class="badge badge-red">Pasif</span>'}</td>
+      <td>
+        <button class="btn-sm btn-success" onclick="extendDevice(${d.id})">+1 Yıl</button>
+        <button class="btn-sm btn-danger" onclick="deactivateDevice(${d.id})">Durdur</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function deactivateDevice(id) { await api('/api/admin/devices/' + id + '/deactivate', { method: 'POST' }); loadDevices(); }
+async function extendDevice(id) { await api('/api/admin/devices/' + id + '/extend', { method: 'POST', body: JSON.stringify({ days: 365 }) }); loadDevices(); }
+
+async function loadChannels() {
+  const chs = await api('/api/admin/channels');
+  if (!chs) return;
+  E('channelsTable').innerHTML = chs.map(c => `<tr>
+    <td>${c.id}</td><td>${c.logo_url ? '<img src="'+c.logo_url+'" style="height:20px;vertical-align:middle;margin-right:8px">' : ''}${c.name}</td>
+    <td>${c.group_name}</td>
+    <td>${c.is_active ? '<span class="badge badge-green">Aktif</span>' : '<span class="badge badge-red">Pasif</span>'}</td>
+    <td><button class="btn-sm btn-danger" onclick="deleteChannel(${c.id})">Sil</button></td>
+  </tr>`).join('');
+}
+
+function showAddChannel() { E('channelModal').classList.add('show'); }
+function showAddVod() { E('vodModal').classList.add('show'); }
+function closeModal(id) { E(id).classList.remove('show'); }
+
+async function addChannel() {
+  await api('/api/admin/channels', { method: 'POST', body: JSON.stringify({ name: E('chName').value, stream_url: E('chUrl').value, logo_url: E('chLogo').value, group_name: E('chGroup').value }) });
+  closeModal('channelModal'); loadChannels();
+  ['chName','chUrl','chLogo'].forEach(id => E(id).value = '');
+}
+
+async function deleteChannel(id) { if (confirm('Kanalı silmek istediğinize emin misiniz?')) { await api('/api/admin/channels/' + id, { method: 'DELETE' }); loadChannels(); } }
+
+async function loadVod() {
+  const vods = await api('/api/admin/vod');
+  if (!vods) return;
+  E('vodTable').innerHTML = vods.map(v => `<tr>
+    <td>${v.id}</td><td>${v.title}</td><td>${v.category}</td><td>${v.year||'-'}</td>
+    <td><button class="btn-sm btn-danger" onclick="deleteVod(${v.id})">Sil</button></td>
+  </tr>`).join('');
+}
+
+async function addVod() {
+  await api('/api/admin/vod', { method: 'POST', body: JSON.stringify({ title: E('vodTitle').value, stream_url: E('vodUrl').value, poster_url: E('vodPoster').value, category: E('vodCategory').value, description: E('vodDesc').value }) });
+  closeModal('vodModal'); loadVod();
+}
+
+async function deleteVod(id) { if (confirm('Silmek istediğinize emin misiniz?')) { await api('/api/admin/vod/' + id, { method: 'DELETE' }); loadVod(); } }
+
+async function importM3U() {
+  const r = await api('/api/admin/import-m3u', { method: 'POST', body: JSON.stringify({ m3u_content: E('m3uContent').value }) });
+  E('importResult').textContent = r?.imported ? `${r.imported} kanal başarıyla içe aktarıldı!` : 'Hata: ' + (r?.error || 'Bilinmeyen');
+}
+
+function fmtDate(d) { if (!d) return '-'; const dt = new Date(d); return dt.toLocaleDateString('tr-TR') + ' ' + dt.toLocaleTimeString('tr-TR', {hour:'2-digit',minute:'2-digit'}); }
+
+// Auto-login check
+if (TOKEN) showApp(); else E('loginPage').style.display = 'flex';
+</script>
+</body>
+</html>

@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FullIPTV</title>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--card:#141420;--accent:#6366f1;--accent2:#818cf8;--text:#fff;--muted:#888;--glow:rgba(99,102,241,0.3)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);overflow:hidden;height:100vh;width:100vw;cursor:none}
+body.show-cursor{cursor:default}
+
+/* Activation Screen */
+.activation{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:linear-gradient(135deg,#0a0a1a,#1a1040)}
+.activation .logo{font-size:48px;font-weight:800;margin-bottom:8px;background:linear-gradient(135deg,var(--accent),#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.activation .sub{color:var(--muted);margin-bottom:40px;font-size:16px}
+.code-input-wrap{display:flex;gap:12px;margin-bottom:24px}
+.code-segment{width:100px;height:64px;background:rgba(255,255,255,0.08);border:2px solid rgba(255,255,255,0.15);border-radius:12px;text-align:center;font-size:28px;font-weight:700;letter-spacing:4px;color:var(--text);outline:none;font-family:monospace}
+.code-segment:focus{border-color:var(--accent);box-shadow:0 0 20px var(--glow)}
+.activate-btn{padding:14px 48px;background:var(--accent);border:none;border-radius:12px;color:#fff;font-size:18px;font-weight:600;cursor:pointer;transition:.3s}
+.activate-btn:hover{background:var(--accent2);transform:scale(1.02)}
+.activate-btn:disabled{opacity:0.5;cursor:not-allowed}
+.error-msg{color:#ef4444;margin-top:16px;font-size:14px}
+.success-msg{color:#22c55e;margin-top:16px;font-size:14px}
+.device-id{color:var(--muted);font-size:11px;margin-top:24px;font-family:monospace}
+
+/* Main Player Interface */
+.player-app{display:none;height:100vh;position:relative}
+.sidebar-nav{position:fixed;left:0;top:0;bottom:0;width:280px;background:linear-gradient(180deg,rgba(20,20,32,0.98),rgba(10,10,15,0.98));z-index:10;transform:translateX(-280px);transition:.3s;padding:20px;overflow-y:auto}
+.sidebar-nav.open{transform:translateX(0)}
+.sidebar-nav h2{font-size:22px;margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1)}
+.category{padding:10px 16px;border-radius:8px;cursor:pointer;font-size:15px;margin-bottom:4px;transition:.2s;color:var(--muted)}
+.category:hover,.category.active{background:rgba(99,102,241,0.15);color:var(--text)}
+.menu-btn{position:fixed;top:20px;left:20px;z-index:11;width:40px;height:40px;background:rgba(0,0,0,0.6);border:1px solid rgba(255,255,255,0.15);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;transition:opacity .3s}
+
+.channel-bar{position:fixed;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,0.95));padding:20px 24px 24px;z-index:5;transform:translateY(100%);transition:.3s}
+.channel-bar.show{transform:translateY(0)}
+.channel-scroll{display:flex;gap:12px;overflow-x:auto;padding:8px 0;scrollbar-width:none}
+.channel-scroll::-webkit-scrollbar{display:none}
+.ch-card{flex-shrink:0;width:180px;height:110px;background:var(--card);border:2px solid transparent;border-radius:12px;cursor:pointer;transition:.2s;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:12px}
+.ch-card:hover,.ch-card.active{border-color:var(--accent);transform:scale(1.04);box-shadow:0 0 20px var(--glow)}
+.ch-card img{max-height:40px;max-width:80px;margin-bottom:8px;object-fit:contain}
+.ch-card .ch-name{font-size:13px;font-weight:600;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}
+.ch-card .ch-group{font-size:10px;color:var(--muted);margin-top:4px}
+.now-playing{font-size:14px;color:var(--muted);margin-bottom:8px}
+.now-playing strong{color:var(--text)}
+
+video{width:100%;height:100%;object-fit:contain;background:#000}
+.video-wrap{width:100vw;height:100vh;background:#000;position:relative}
+.loading-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.7);z-index:3}
+.spinner{width:48px;height:48px;border:3px solid rgba(255,255,255,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.info-bar{position:fixed;top:20px;right:20px;z-index:11;display:flex;align-items:center;gap:12px;opacity:0;transition:opacity .3s}
+.info-bar.show{opacity:1}
+.exp-badge{background:rgba(34,197,94,0.2);color:#22c55e;padding:4px 12px;border-radius:20px;font-size:12px}
+</style>
+</head>
+<body>
+
+<!-- Activation Screen -->
+<div class="activation" id="activationScreen">
+  <div class="logo">FullIPTV</div>
+  <div class="sub">Aktivasyon kodunuzu girin</div>
+  <div class="code-input-wrap">
+    <input class="code-segment" id="code1" maxlength="4" autofocus oninput="autoTab(this,'code2')" placeholder="XXXX">
+    <input class="code-segment" id="code2" maxlength="4" oninput="autoTab(this,'code3')" placeholder="XXXX">
+    <input class="code-segment" id="code3" maxlength="4" placeholder="XXXX">
+  </div>
+  <button class="activate-btn" id="activateBtn" onclick="activate()">Aktifleştir</button>
+  <div class="error-msg" id="actError"></div>
+  <div class="success-msg" id="actSuccess"></div>
+  <div class="device-id">Cihaz ID: <span id="deviceIdDisplay"></span></div>
+</div>
+
+<!-- Player App -->
+<div class="player-app" id="playerApp">
+  <div class="menu-btn" id="menuBtn" onclick="toggleMenu()">☰</div>
+
+  <div class="info-bar" id="infoBar">
+    <div class="exp-badge" id="expBadge"></div>
+  </div>
+
+  <div class="sidebar-nav" id="sideNav">
+    <h2>FullIPTV</h2>
+    <div id="categoryList"></div>
+  </div>
+
+  <div class="video-wrap" onclick="toggleUI()">
+    <video id="videoPlayer" autoplay playsinline></video>
+    <div class="loading-overlay" id="loadingOverlay" style="display:none"><div class="spinner"></div></div>
+  </div>
+
+  <div class="channel-bar" id="channelBar">
+    <div class="now-playing" id="nowPlaying">Kanal seçin...</div>
+    <div class="channel-scroll" id="channelScroll"></div>
+  </div>
+</div>
+
+<script>
+const API = location.origin;
+let DEVICE_ID = localStorage.getItem('fulliptv_device_id');
+let channels = [];
+let currentChannel = null;
+let hls = null;
+let uiTimeout = null;
+
+// Generate unique device ID
+if (!DEVICE_ID) {
+  DEVICE_ID = 'FTV-' + crypto.randomUUID().replace(/-/g, '').substring(0, 24);
+  localStorage.setItem('fulliptv_device_id', DEVICE_ID);
+}
+document.getElementById('deviceIdDisplay').textContent = DEVICE_ID;
+
+// Auto-tab on code input
+function autoTab(el, nextId) {
+  el.value = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  if (el.value.length === 4) document.getElementById(nextId)?.focus();
+}
+
+// Activate device
+async function activate() {
+  const code = [E('code1').value, E('code2').value, E('code3').value].join('-').toUpperCase();
+  if (code.length !== 14) { E('actError').textContent = 'Lütfen 12 haneli kodu eksiksiz girin'; return; }
+
+  E('activateBtn').disabled = true;
+  E('activateBtn').textContent = 'Kontrol ediliyor...';
+  E('actError').textContent = '';
+
+  try {
+    const r = await fetch(API + '/api/activate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code, device_id: DEVICE_ID, device_name: getDeviceName(), device_type: getDeviceType() })
+    });
+    const data = await r.json();
+    if (data.success) {
+      localStorage.setItem('fulliptv_activated', '1');
+      localStorage.setItem('fulliptv_expires', data.expires_at);
+      E('actSuccess').textContent = '✓ Aktifleştirildi! Yönlendiriliyor...';
+      setTimeout(() => startPlayer(), 1000);
+    } else {
+      E('actError').textContent = data.error || 'Aktivasyon başarısız';
+    }
+  } catch (e) {
+    E('actError').textContent = 'Sunucuya bağlanılamıyor: ' + e.message;
+  }
+  E('activateBtn').disabled = false;
+  E('activateBtn').textContent = 'Aktifleştir';
+}
+
+// Check if already activated
+async function checkActivation() {
+  if (!localStorage.getItem('fulliptv_activated')) return false;
+  try {
+    const r = await fetch(API + '/api/check', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ device_id: DEVICE_ID })
+    });
+    const data = await r.json();
+    return data.active;
+  } catch { return false; }
+}
+
+// Start player
+async function startPlayer() {
+  E('activationScreen').style.display = 'none';
+  E('playerApp').style.display = 'block';
+
+  const exp = localStorage.getItem('fulliptv_expires');
+  if (exp) E('expBadge').textContent = 'Bitiş: ' + new Date(exp).toLocaleDateString('tr-TR');
+
+  await loadChannels();
+  showUI();
+}
+
+// Load channels via Xtream API
+async function loadChannels() {
+  try {
+    const r = await fetch(API + `/player_api.php?username=${DEVICE_ID}&password=x&action=get_live_streams`);
+    channels = await r.json();
+    renderCategories();
+    renderChannels(channels);
+    if (channels.length > 0) playChannel(channels[0]);
+  } catch (e) { console.error('Channel load error:', e); }
+}
+
+function renderCategories() {
+  const cats = [...new Set(channels.map(c => c.category_name))];
+  E('categoryList').innerHTML =
+    `<div class="category active" onclick="filterCategory(null, this)">Tümü (${channels.length})</div>` +
+    cats.map(c => {
+      const count = channels.filter(ch => ch.category_name === c).length;
+      return `<div class="category" onclick="filterCategory('${c}', this)">${c} (${count})</div>`;
+    }).join('');
+}
+
+function filterCategory(cat, el) {
+  document.querySelectorAll('.category').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  renderChannels(cat ? channels.filter(c => c.category_name === cat) : channels);
+  E('sideNav').classList.remove('open');
+}
+
+function renderChannels(chs) {
+  E('channelScroll').innerHTML = chs.map(ch => `
+    <div class="ch-card ${currentChannel?.stream_id === ch.stream_id ? 'active' : ''}" onclick="playChannel(${JSON.stringify(ch).replace(/"/g,'&quot;')})">
+      ${ch.stream_icon ? `<img src="${ch.stream_icon}" onerror="this.style.display='none'" alt="">` : '<div style="font-size:24px;margin-bottom:4px">📺</div>'}
+      <div class="ch-name">${ch.name}</div>
+      <div class="ch-group">${ch.category_name}</div>
+    </div>
+  `).join('');
+}
+
+function playChannel(ch) {
+  currentChannel = ch;
+  const url = ch.direct_source;
+  const video = E('videoPlayer');
+
+  E('nowPlaying').innerHTML = `Şimdi izliyorsunuz: <strong>${ch.name}</strong>`;
+  E('loadingOverlay').style.display = 'flex';
+
+  // Cleanup previous
+  if (hls) { hls.destroy(); hls = null; }
+
+  if (url.includes('.m3u8') && Hls.isSupported()) {
+    hls = new Hls({ enableWorker: true, lowLatencyMode: true });
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, () => { video.play().catch(()=>{}); E('loadingOverlay').style.display = 'none'; });
+    hls.on(Hls.Events.ERROR, (_, data) => { if (data.fatal) E('loadingOverlay').style.display = 'none'; });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = url;
+    video.play().catch(()=>{});
+    video.onloadeddata = () => E('loadingOverlay').style.display = 'none';
+  } else {
+    video.src = url;
+    video.play().catch(()=>{});
+    video.onloadeddata = () => E('loadingOverlay').style.display = 'none';
+  }
+
+  renderChannels(channels.filter(c => !document.querySelector('.category.active')?.textContent.includes('(') || c.category_name === currentChannel?.category_name || true));
+  showUI();
+}
+
+// UI Show/Hide
+function showUI() {
+  body_showCursor();
+  E('channelBar').classList.add('show');
+  E('menuBtn').style.opacity = '1';
+  E('infoBar').classList.add('show');
+  clearTimeout(uiTimeout);
+  uiTimeout = setTimeout(hideUI, 5000);
+}
+
+function hideUI() {
+  E('channelBar').classList.remove('show');
+  E('menuBtn').style.opacity = '0';
+  E('infoBar').classList.remove('show');
+  E('sideNav').classList.remove('open');
+  document.body.classList.remove('show-cursor');
+}
+
+function body_showCursor() { document.body.classList.add('show-cursor'); }
+function toggleUI() { E('channelBar').classList.contains('show') ? hideUI() : showUI(); }
+function toggleMenu() { E('sideNav').classList.toggle('open'); showUI(); }
+
+// Mouse/Touch events
+document.addEventListener('mousemove', showUI);
+document.addEventListener('touchstart', showUI);
+
+// Keyboard navigation (for TV remotes)
+document.addEventListener('keydown', (e) => {
+  showUI();
+  if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    const idx = channels.findIndex(c => c.stream_id === currentChannel?.stream_id);
+    const next = e.key === 'ArrowUp' ? Math.max(0, idx - 1) : Math.min(channels.length - 1, idx + 1);
+    playChannel(channels[next]);
+  }
+  if (e.key === 'Enter' || e.key === ' ') {
+    const video = E('videoPlayer');
+    video.paused ? video.play() : video.pause();
+  }
+  if (e.key === 'Escape' || e.key === 'Backspace') toggleMenu();
+});
+
+function E(id) { return document.getElementById(id); }
+function getDeviceName() { return navigator.userAgent.includes('SmartTV') ? 'Smart TV' : navigator.userAgent.includes('BRAVIA') ? 'Sony TV' : navigator.userAgent.includes('Tizen') ? 'Samsung TV' : navigator.userAgent.includes('Web0S') ? 'LG TV' : navigator.userAgent.includes('Fire') ? 'Fire TV' : 'Web Browser'; }
+function getDeviceType() { return screen.width > 1200 ? 'TV' : 'Mobile'; }
+
+// Init
+(async () => {
+  if (await checkActivation()) startPlayer();
+  else E('activationScreen').style.display = 'flex';
+})();
+</script>
+</body>
+</html>

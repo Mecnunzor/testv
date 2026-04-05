@@ -1,0 +1,16 @@
+{
+  "name": "fulliptv-server",
+  "version": "1.0.0",
+  "description": "FullIPTV - Self-hosted IPTV Platform",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2"
+  },
+  "author": "FullIPTV",
+  "license": "MIT"
+}
