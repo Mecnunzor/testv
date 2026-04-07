@@ -1,0 +1,212 @@
+[
+  {
+    "title": "Doga Belgeseli",
+    "poster_url": "https://picsum.photos/seed/natureSeries/300/450",
+    "description": "Anadolunun essiz dogasi ve yaban hayati",
+    "category": "Dizi",
+    "year": 2024,
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": [
+          {
+            "ep": 1,
+            "title": "Karadeniz Ormanlari",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 2,
+            "title": "Ege Kiyilari",
+            "stream_url": "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+            "duration": "15 dk"
+          },
+          {
+            "ep": 3,
+            "title": "Kapadokya",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 4,
+            "title": "Dogu Anadolu",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          }
+        ]
+      },
+      {
+        "season": 2,
+        "episodes": [
+          {
+            "ep": 1,
+            "title": "Akdeniz Derinlikleri",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 2,
+            "title": "Marmara Adalari",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 3,
+            "title": "Van Golu",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          }
+        ]
+      }
+    ],
+    "is_active": true,
+    "id": "mnn98ccmobqde1",
+    "created_at": "2026-04-06T13:57:11.686Z"
+  },
+  {
+    "title": "Tarih Yolculugu",
+    "poster_url": "https://picsum.photos/seed/historySeries/300/450",
+    "description": "Antik medeniyetlerden modern caga",
+    "category": "Dizi",
+    "year": 2024,
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": [
+          {
+            "ep": 1,
+            "title": "Hitit Imparatorlugu",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "12 dk"
+          },
+          {
+            "ep": 2,
+            "title": "Lidya ve Altin",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "12 dk"
+          },
+          {
+            "ep": 3,
+            "title": "Efes Antik Kenti",
+            "stream_url": "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+            "duration": "15 dk"
+          },
+          {
+            "ep": 4,
+            "title": "Bizans Donemi",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "12 dk"
+          },
+          {
+            "ep": 5,
+            "title": "Osmanli Kurulusu",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "12 dk"
+          }
+        ]
+      }
+    ],
+    "is_active": true,
+    "id": "mnn98ccmwbhl98",
+    "created_at": "2026-04-06T13:57:11.686Z"
+  },
+  {
+    "title": "Cocuk Dunyasi",
+    "poster_url": "https://picsum.photos/seed/kidsWorld/300/450",
+    "description": "Cocuklar icin egitici ve eglenceli animasyonlar",
+    "category": "Cocuk",
+    "year": 2023,
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": [
+          {
+            "ep": 1,
+            "title": "Renkler",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 2,
+            "title": "Sayilar",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 3,
+            "title": "Hayvanlar",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 4,
+            "title": "Mevsimler",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          }
+        ]
+      },
+      {
+        "season": 2,
+        "episodes": [
+          {
+            "ep": 1,
+            "title": "Uzay",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 2,
+            "title": "Okyanuslar",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 3,
+            "title": "Dinozorlar",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          }
+        ]
+      }
+    ],
+    "is_active": true,
+    "id": "mnn98ccmu8ozaq",
+    "created_at": "2026-04-06T13:57:11.686Z"
+  },
+  {
+    "title": "Muzik Yolculugu",
+    "poster_url": "https://picsum.photos/seed/musicJourney/300/450",
+    "description": "Dunyanin dort bir yanindan muzik",
+    "category": "Dizi",
+    "year": 2024,
+    "seasons": [
+      {
+        "season": 1,
+        "episodes": [
+          {
+            "ep": 1,
+            "title": "Istanbul Ezgileri",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 2,
+            "title": "Anadolu Turkuleri",
+            "stream_url": "https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8",
+            "duration": "10 dk"
+          },
+          {
+            "ep": 3,
+            "title": "Akdeniz Ritimleri",
+            "stream_url": "https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8",
+            "duration": "15 dk"
+          }
+        ]
+      }
+    ],
+    "is_active": true,
+    "id": "mnn98ccm5s78ye",
+    "created_at": "2026-04-06T13:57:11.686Z"
+  }
+]

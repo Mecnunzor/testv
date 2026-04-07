@@ -9,7 +9,6 @@ app.use(cors());
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
-// ── Simple JSON File Database ──
 const DATA_DIR = path.join(__dirname, '..', 'data');
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
@@ -28,25 +27,133 @@ class JsonDB {
   count(fn) { return fn ? this.data.filter(fn).length : this.data.length; }
 }
 
-const db = { admins: new JsonDB('admins'), codes: new JsonDB('codes'), devices: new JsonDB('devices'), channels: new JsonDB('channels'), vod: new JsonDB('vod') };
+const db = { admins: new JsonDB('admins'), codes: new JsonDB('codes'), devices: new JsonDB('devices'), channels: new JsonDB('channels'), vod: new JsonDB('vod'), ads: new JsonDB('ads'), series: new JsonDB('series') };
 
-// ── Seed defaults ──
+// ── Seed Admin ──
 if (db.admins.count() === 0) {
   db.admins.insert({ username: 'admin', password: crypto.createHash('sha256').update('admin123').digest('hex') });
   console.log('Default admin: admin / admin123');
 }
+
+// ── Seed Channels with real logos ──
 if (db.channels.count() === 0) {
   [
-    ['TRT 1','https://tv-trt1.medya.trt.com.tr/master.m3u8','Ulusal'],
-    ['TRT Haber','https://tv-trthaber.medya.trt.com.tr/master.m3u8','Haber'],
-    ['TRT Spor','https://tv-trtspor1.medya.trt.com.tr/master.m3u8','Spor'],
-    ['TRT Belgesel','https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8','Belgesel'],
-    ['TRT Muzik','https://tv-trtmuzik.medya.trt.com.tr/master.m3u8','Muzik'],
-    ['TRT Cocuk','https://tv-trtcocuk.medya.trt.com.tr/master.m3u8','Cocuk'],
-    ['TRT World','https://tv-trtworld.medya.trt.com.tr/master.m3u8','Uluslararasi'],
-    ['TBMM TV','https://meclisdijitalmedya.tbmm.gov.tr/tbmmwebtv/tbmmtv.m3u8','Ulusal'],
-  ].forEach(([name,url,group],i) => db.channels.insert({name,stream_url:url,group_name:group,logo_url:'',epg_id:'',sort_order:i,is_active:true}));
-  console.log('Default channels added');
+    ['TRT 1','https://tv-trt1.medya.trt.com.tr/master.m3u8','Ulusal','https://i.imgur.com/8QK4Q0j.png'],
+    ['TRT Haber','https://tv-trthaber.medya.trt.com.tr/master.m3u8','Haber','https://i.imgur.com/JfKxP2q.png'],
+    ['TRT Spor','https://tv-trtspor1.medya.trt.com.tr/master.m3u8','Spor','https://i.imgur.com/K5nQ8Lm.png'],
+    ['TRT Belgesel','https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8','Belgesel','https://i.imgur.com/Xv3qR7n.png'],
+    ['TRT Muzik','https://tv-trtmuzik.medya.trt.com.tr/master.m3u8','Muzik','https://i.imgur.com/Hm5pW3s.png'],
+    ['TRT Cocuk','https://tv-trtcocuk.medya.trt.com.tr/master.m3u8','Cocuk','https://i.imgur.com/Rn7dY4t.png'],
+    ['TRT World','https://tv-trtworld.medya.trt.com.tr/master.m3u8','Uluslararasi','https://i.imgur.com/Uj6mK9v.png'],
+    ['TBMM TV','https://meclisdijitalmedya.tbmm.gov.tr/tbmmwebtv/tbmmtv.m3u8','Ulusal',''],
+  ].forEach(([name,url,group,logo],i) => db.channels.insert({name,stream_url:url,group_name:group,logo_url:logo,epg_id:'',sort_order:i,is_active:true}));
+  console.log('8 channels added');
+}
+
+// ── Seed VOD ──
+const vodSeed = [
+  {title:'Big Buck Bunny',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/bbb/300/450',description:'Orman hayvanlarinin eglenceli macerasi',category:'Film',year:2008,duration:'10 dk'},
+  {title:'Sintel',stream_url:'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',poster_url:'https://picsum.photos/seed/sintel/300/450',description:'Ejderha arayan genc savasci',category:'Film',year:2010,duration:'15 dk'},
+  {title:'Tears of Steel',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/tears/300/450',description:'Bilim kurgu kisa film',category:'Film',year:2012,duration:'12 dk'},
+  {title:'Elephant Dream',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/elephant/300/450',description:'Ilk acik kaynak animasyon filmi',category:'Film',year:2006,duration:'11 dk'},
+  {title:'Cosmos Laundromat',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/cosmos/300/450',description:'Paralel evrenlerde macera',category:'Film',year:2015,duration:'12 dk'},
+  {title:'Spring',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/springmovie/300/450',description:'Buyulu orman macerasi',category:'Film',year:2019,duration:'8 dk'},
+  {title:'Coffee Run',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/coffeerun/300/450',description:'Kahve tutkunu karakter',category:'Film',year:2020,duration:'3 dk'},
+  {title:'Agent 327',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/agent327/300/450',description:'Gizli ajanin macerasi',category:'Film',year:2017,duration:'4 dk'},
+  {title:'Bunny Macerasi',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/bunnykid/300/450',description:'Sevimli tavsan macerasi 3+ yas',category:'Cocuk',year:2008,duration:'10 dk'},
+  {title:'Kozmos Cocuk',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/cosmoskid/300/450',description:'Uzay temali animasyon 5+ yas',category:'Cocuk',year:2015,duration:'12 dk'},
+  {title:'Bahar Cocuk',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/springkid/300/450',description:'Doga ve hayvanlar macerasi',category:'Cocuk',year:2019,duration:'8 dk'},
+  {title:'Cam Bardak',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/glasskid/300/450',description:'Iki arkadasin komik hikayesi',category:'Cocuk',year:2015,duration:'3 dk'},
+  {title:'Renk Dunyasi',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',poster_url:'https://picsum.photos/seed/colorkid/300/450',description:'Renklerle egitici animasyon',category:'Cocuk',year:2020,duration:'5 dk'},
+];
+if (db.vod.count() === 0) {
+  vodSeed.forEach((v,i) => db.vod.insert({...v,sort_order:i,is_active:true}));
+  console.log(`${vodSeed.length} VOD items added`);
+}
+
+// ── Seed Series with Episodes ──
+if (db.series.count() === 0) {
+  const seriesData = [
+    {
+      title: 'Doga Belgeseli',
+      poster_url: 'https://picsum.photos/seed/natureSeries/300/450',
+      description: 'Anadolunun essiz dogasi ve yaban hayati',
+      category: 'Dizi',
+      year: 2024,
+      seasons: [
+        { season: 1, episodes: [
+          {ep:1,title:'Karadeniz Ormanlari',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:2,title:'Ege Kiyilari',stream_url:'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',duration:'15 dk'},
+          {ep:3,title:'Kapadokya',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:4,title:'Dogu Anadolu',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+        ]},
+        { season: 2, episodes: [
+          {ep:1,title:'Akdeniz Derinlikleri',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:2,title:'Marmara Adalari',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:3,title:'Van Golu',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+        ]},
+      ]
+    },
+    {
+      title: 'Tarih Yolculugu',
+      poster_url: 'https://picsum.photos/seed/historySeries/300/450',
+      description: 'Antik medeniyetlerden modern caga',
+      category: 'Dizi',
+      year: 2024,
+      seasons: [
+        { season: 1, episodes: [
+          {ep:1,title:'Hitit Imparatorlugu',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'12 dk'},
+          {ep:2,title:'Lidya ve Altin',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'12 dk'},
+          {ep:3,title:'Efes Antik Kenti',stream_url:'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',duration:'15 dk'},
+          {ep:4,title:'Bizans Donemi',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'12 dk'},
+          {ep:5,title:'Osmanli Kurulusu',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'12 dk'},
+        ]},
+      ]
+    },
+    {
+      title: 'Cocuk Dunyasi',
+      poster_url: 'https://picsum.photos/seed/kidsWorld/300/450',
+      description: 'Cocuklar icin egitici ve eglenceli animasyonlar',
+      category: 'Cocuk',
+      year: 2023,
+      seasons: [
+        { season: 1, episodes: [
+          {ep:1,title:'Renkler',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:2,title:'Sayilar',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:3,title:'Hayvanlar',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:4,title:'Mevsimler',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+        ]},
+        { season: 2, episodes: [
+          {ep:1,title:'Uzay',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:2,title:'Okyanuslar',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:3,title:'Dinozorlar',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+        ]},
+      ]
+    },
+    {
+      title: 'Muzik Yolculugu',
+      poster_url: 'https://picsum.photos/seed/musicJourney/300/450',
+      description: 'Dunyanin dort bir yanindan muzik',
+      category: 'Dizi',
+      year: 2024,
+      seasons: [
+        { season: 1, episodes: [
+          {ep:1,title:'Istanbul Ezgileri',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:2,title:'Anadolu Turkuleri',stream_url:'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',duration:'10 dk'},
+          {ep:3,title:'Akdeniz Ritimleri',stream_url:'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',duration:'15 dk'},
+        ]},
+      ]
+    },
+  ];
+  seriesData.forEach(s => db.series.insert({...s,is_active:true}));
+  console.log(`${seriesData.length} series added`);
+}
+
+// ── Seed Ads ──
+if (db.ads.count() === 0) {
+  db.ads.insert({title:'Otel Spa Promosyon',image_url:'https://placehold.co/728x90/7c5cfc/ffffff?text=SPA+%26+WELLNESS+%7C+%2550+INDIRIM+%7C+Rezervasyon+icin+resepsiyonu+arayin',link_url:'',position:'bottom',display_mode:'always',interval_minutes:0,duration_seconds:0,is_active:true});
+  db.ads.insert({title:'Restoran Menusu',image_url:'https://placehold.co/728x90/e53e3e/ffffff?text=ROOF+RESTAURANT+%7C+Aksam+Yemegi+%7C+18.00+-+23.00',link_url:'',position:'bottom',display_mode:'always',interval_minutes:0,duration_seconds:0,is_active:true});
+  console.log('Demo ads added');
 }
 
 // ── Helpers ──
@@ -103,6 +210,26 @@ app.get('/api/admin/vod', authAdmin, (req, res) => res.json(db.vod.find()));
 app.post('/api/admin/vod', authAdmin, (req, res) => { const v=db.vod.insert({...req.body,is_active:true,sort_order:db.vod.count()}); res.json({id:v.id}); });
 app.delete('/api/admin/vod/:id', authAdmin, (req, res) => { db.vod.remove(v=>v.id===req.params.id); res.json({success:true}); });
 
+// ── Ads CRUD ──
+app.get('/api/admin/ads', authAdmin, (req, res) => {
+  const ads = db.ads.find();
+  res.json(ads);
+});
+app.post('/api/admin/ads', authAdmin, (req, res) => {
+  const ad = db.ads.insert({...req.body, is_active: true});
+  res.json({id:ad.id});
+});
+app.put('/api/admin/ads/:id', authAdmin, (req, res) => { db.ads.update(a=>a.id===req.params.id, req.body); res.json({success:true}); });
+app.delete('/api/admin/ads/:id', authAdmin, (req, res) => { db.ads.remove(a=>a.id===req.params.id); res.json({success:true}); });
+app.post('/api/admin/ads/:id/toggle', authAdmin, (req, res) => {
+  const ad = db.ads.findOne(a=>a.id===req.params.id);
+  if (ad) db.ads.update(a=>a.id===req.params.id, {is_active: !ad.is_active});
+  res.json({success:true});
+});
+
+// ── Series CRUD ──
+app.get('/api/admin/series', authAdmin, (req, res) => res.json(db.series.find()));
+
 app.post('/api/admin/import-m3u', authAdmin, (req, res) => {
   const {m3u_content}=req.body; if (!m3u_content) return res.status(400).json({error:'No M3U'}); const lines=m3u_content.split('\n'); let imp=0;
   for (let i=0;i<lines.length;i++) { if (lines[i].startsWith('#EXTINF:')) {
@@ -115,11 +242,11 @@ app.get('/api/admin/stats', authAdmin, (req, res) => {
   const now=new Date();
   res.json({ totalCodes:db.codes.count(), usedCodes:db.codes.count(c=>c.is_used), availableCodes:db.codes.count(c=>!c.is_used),
     activeDevices:db.devices.count(d=>d.is_active&&new Date(d.expires_at)>now), totalDevices:db.devices.count(),
-    totalChannels:db.channels.count(c=>c.is_active), totalVod:db.vod.count(v=>v.is_active),
+    totalChannels:db.channels.count(c=>c.is_active), totalVod:db.vod.count(v=>v.is_active), totalAds:db.ads.count(a=>a.is_active), totalSeries:db.series.count(s=>s.is_active),
     recentDevices:db.devices.find().sort((a,b)=>new Date(b.last_seen||0)-new Date(a.last_seen||0)).slice(0,5) });
 });
 
-// ═══ DEVICE ACTIVATION ═══
+// ═══ PUBLIC ENDPOINTS ═══
 app.post('/api/activate', (req, res) => {
   const {code,device_id,device_name='Unknown',device_type='TV',mac_address=''}=req.body;
   if (!code||!device_id) return res.status(400).json({error:'Code and device_id required'});
@@ -140,6 +267,9 @@ app.post('/api/check', (req, res) => {
   const r=checkDev(device_id); if (!r.ok) return res.status(403).json({active:false,error:r.err});
   res.json({active:true,expires_at:r.device.expires_at,device_name:r.device.device_name});
 });
+
+app.get('/api/ads', (req, res) => res.json(db.ads.find(a=>a.is_active)));
+app.get('/api/series', (req, res) => res.json(db.series.find(s=>s.is_active)));
 
 // ═══ XTREAM CODES API ═══
 app.get('/player_api.php', (req, res) => {
@@ -169,4 +299,4 @@ app.use('/player', express.static(path.join(__dirname,'..','player')));
 app.use('/', express.static(path.join(__dirname,'..','player')));
 
 const PORT = process.env.PORT||3000;
-app.listen(PORT, '0.0.0.0', () => console.log(`\n  FullIPTV v1.0 running on http://localhost:${PORT}\n  Admin: /admin | Player: /player\n  Login: admin / admin123\n`));
+app.listen(PORT, '0.0.0.0', () => console.log(`\n  FullIPTV v5.0 running on http://localhost:${PORT}\n  Admin: /admin | Player: /player\n  Login: admin / admin123\n`));

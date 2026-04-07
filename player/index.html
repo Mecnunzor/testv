@@ -7,147 +7,120 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-:root{--bg:#06060a;--surface:#0d0d14;--card:#13131f;--card-hover:#1a1a2e;--accent:#7c5cfc;--accent2:#a78bfa;--accent-glow:rgba(124,92,252,0.25);--red:#e53e3e;--green:#38a169;--text:#f0f0f5;--muted:#6b6b80;--border:rgba(255,255,255,0.06);--glass:rgba(13,13,20,0.85);--font:'Plus Jakarta Sans',system-ui,sans-serif;--ease:cubic-bezier(.25,.8,.25,1)}
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#06060a;--surface:#0d0d14;--card:#13131f;--accent:#7c5cfc;--accent2:#a78bfa;--red:#e53e3e;--green:#38a169;--text:#f0f0f5;--muted:#6b6b80;--border:rgba(255,255,255,.06);--glass:rgba(13,13,20,.85);--font:'Plus Jakarta Sans',system-ui,sans-serif;--ease:cubic-bezier(.25,.8,.25,1)}
 html,body{height:100%;overflow:hidden}
-body{font-family:var(--font);background:var(--bg);color:var(--text);cursor:default}
-
-/* ─── ACTIVATION SCREEN ─── */
-.act{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:radial-gradient(ellipse at 50% 0%,#1a1040 0%,var(--bg) 70%);position:relative;overflow:hidden}
-.act::before{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,var(--accent-glow),transparent 70%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
-.act-logo{font-size:52px;font-weight:800;letter-spacing:-1px;background:linear-gradient(135deg,#7c5cfc,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px;animation:fadeUp .6s var(--ease) both}
-.act-sub{color:var(--muted);font-size:15px;margin-bottom:48px;animation:fadeUp .6s .1s var(--ease) both}
-.code-wrap{display:flex;gap:16px;margin-bottom:32px;animation:fadeUp .6s .2s var(--ease) both}
-.code-seg{width:110px;height:68px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.08);border-radius:14px;text-align:center;font-size:26px;font-weight:700;letter-spacing:6px;color:var(--text);outline:none;font-family:var(--font);transition:all .2s var(--ease)}
-.code-seg:focus{border-color:var(--accent);background:rgba(124,92,252,0.06);box-shadow:0 0 30px var(--accent-glow),inset 0 0 20px rgba(124,92,252,0.05)}
-.act-btn{padding:16px 56px;background:linear-gradient(135deg,#7c5cfc,#6d4de8);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font);transition:all .25s var(--ease);animation:fadeUp .6s .3s var(--ease) both;letter-spacing:.3px}
-.act-btn:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--accent-glow)}
-.act-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
-.act-err{color:var(--red);margin-top:16px;font-size:13px;font-weight:500}
-.act-ok{color:var(--green);margin-top:16px;font-size:13px;font-weight:500}
-.act-dev{color:var(--muted);font-size:10px;margin-top:32px;font-family:monospace;opacity:.5}
-
-/* ─── MAIN APP ─── */
-.app{display:none;height:100vh;overflow:hidden;position:relative}
-
-/* Top nav */
-.topnav{position:fixed;top:0;left:0;right:0;z-index:50;padding:0 48px;height:64px;display:flex;align-items:center;gap:40px;transition:background .3s;background:linear-gradient(180deg,rgba(6,6,10,.95) 0%,transparent 100%)}
-.topnav.scrolled{background:var(--glass);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-logo{font-size:22px;font-weight:800;background:linear-gradient(135deg,#7c5cfc,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;flex-shrink:0}
-.nav-tabs{display:flex;gap:4px}
-.nav-tab{padding:8px 18px;font-size:13px;font-weight:600;color:var(--muted);border:none;background:transparent;border-radius:8px;cursor:pointer;font-family:var(--font);transition:all .2s var(--ease);letter-spacing:.2px}
-.nav-tab:hover{color:var(--text);background:rgba(255,255,255,0.04)}
-.nav-tab.active{color:#fff;background:rgba(124,92,252,0.15)}
-.nav-right{margin-left:auto;display:flex;align-items:center;gap:16px}
-.nav-exp{font-size:11px;color:var(--muted);background:rgba(255,255,255,0.04);padding:5px 12px;border-radius:20px}
-.nav-search{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;transition:.2s}
-.nav-search:hover{border-color:var(--accent);background:rgba(124,92,252,0.06)}
-
-/* Content area */
-.content{height:100vh;overflow-y:auto;overflow-x:hidden;padding-top:64px;scroll-behavior:smooth;scrollbar-width:none}
+body{font-family:var(--font);background:var(--bg);color:var(--text)}
+/* Activation */
+.act{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100vh;background:radial-gradient(ellipse at 50% 0%,#1a1040,var(--bg) 70%)}
+.act-logo{font-size:48px;font-weight:800;background:linear-gradient(135deg,#7c5cfc,#c084fc,#f472b6);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.act-sub{color:var(--muted);font-size:15px;margin-bottom:40px}
+.code-wrap{display:flex;gap:14px;margin-bottom:28px}
+.code-seg{width:105px;height:64px;background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.1);border-radius:14px;text-align:center;font-size:24px;font-weight:700;letter-spacing:5px;color:#fff;outline:none;font-family:var(--font)}
+.code-seg:focus{border-color:var(--accent);box-shadow:0 0 24px rgba(124,92,252,.25)}
+.act-btn{padding:14px 52px;background:var(--accent);border:none;border-radius:14px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font)}
+.act-btn:disabled{opacity:.4}
+.act-err{color:var(--red);margin-top:14px;font-size:13px}
+.act-ok{color:var(--green);margin-top:14px;font-size:13px}
+.act-dev{color:var(--muted);font-size:10px;margin-top:28px;font-family:monospace;opacity:.4}
+/* App */
+.app{display:none;height:100vh;overflow:hidden}
+.topnav{position:fixed;top:0;left:0;right:0;z-index:50;padding:0 40px;height:60px;display:flex;align-items:center;gap:32px;background:linear-gradient(180deg,rgba(6,6,10,.9),transparent)}
+.nav-logo{font-size:20px;font-weight:800;background:linear-gradient(135deg,#7c5cfc,#c084fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.nav-tabs{display:flex;gap:2px}
+.nav-tab{padding:8px 16px;font-size:13px;font-weight:600;color:var(--muted);border:none;background:none;border-radius:8px;cursor:pointer;font-family:var(--font)}
+.nav-tab:hover{color:#fff}
+.nav-tab.active{color:#fff;background:rgba(124,92,252,.15)}
+.nav-right{margin-left:auto;display:flex;gap:12px;align-items:center}
+.nav-exp{font-size:11px;color:var(--muted);background:rgba(255,255,255,.04);padding:4px 12px;border-radius:20px}
+.content{height:100vh;overflow-y:auto;padding-top:60px;scrollbar-width:none}
 .content::-webkit-scrollbar{display:none}
-
-/* Hero / Featured */
-.hero{position:relative;height:70vh;min-height:480px;overflow:hidden;margin-bottom:-60px}
-.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.5)}
-.hero-gradient{position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 0%,transparent 40%,transparent 60%,rgba(6,6,10,.4) 100%)}
-.hero-content{position:absolute;bottom:100px;left:48px;max-width:550px;z-index:2}
-.hero-badge{display:inline-block;padding:4px 12px;background:var(--accent);border-radius:6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px}
-.hero-title{font-size:42px;font-weight:800;line-height:1.1;margin-bottom:12px;letter-spacing:-.5px}
-.hero-desc{font-size:14px;color:rgba(255,255,255,.7);line-height:1.6;margin-bottom:20px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
-.hero-actions{display:flex;gap:12px}
-.btn-play{padding:12px 28px;background:#fff;color:#000;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:var(--font);display:flex;align-items:center;gap:8px;transition:all .2s var(--ease)}
-.btn-play:hover{transform:scale(1.03);box-shadow:0 4px 20px rgba(255,255,255,.2)}
-.btn-info{padding:12px 28px;background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:var(--font);backdrop-filter:blur(10px);transition:all .2s var(--ease)}
-.btn-info:hover{background:rgba(255,255,255,.2)}
-
-/* Row */
-.row{padding:0 48px;margin-bottom:36px}
-.row-title{font-size:18px;font-weight:700;margin-bottom:14px;letter-spacing:-.2px}
-.row-scroll{display:flex;gap:12px;overflow-x:auto;padding-bottom:8px;scroll-snap-type:x mandatory;scrollbar-width:none}
+/* Hero */
+.hero{position:relative;height:65vh;min-height:400px;overflow:hidden;margin-bottom:-40px}
+.hero-bg{position:absolute;inset:0;background-size:cover;background-position:center;filter:brightness(.45)}
+.hero-grad{position:absolute;inset:0;background:linear-gradient(0deg,var(--bg) 0%,transparent 50%)}
+.hero-ct{position:absolute;bottom:80px;left:40px;max-width:500px;z-index:2}
+.hero-badge{display:inline-block;padding:3px 10px;background:var(--accent);border-radius:6px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px}
+.hero-title{font-size:36px;font-weight:800;line-height:1.1;margin-bottom:10px}
+.hero-desc{font-size:13px;color:rgba(255,255,255,.65);line-height:1.5;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.btn-play{padding:10px 24px;background:#fff;color:#000;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:var(--font);margin-right:8px}
+.btn-info{padding:10px 24px;background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font)}
+/* Rows */
+.row{padding:0 40px;margin-bottom:32px}
+.row-title{font-size:17px;font-weight:700;margin-bottom:12px}
+.row-scroll{display:flex;gap:10px;overflow-x:auto;scrollbar-width:none}
 .row-scroll::-webkit-scrollbar{display:none}
-
-/* Cards */
-.card{flex-shrink:0;border-radius:10px;overflow:hidden;cursor:pointer;transition:all .25s var(--ease);scroll-snap-align:start;position:relative;background:var(--card)}
-.card:hover{transform:scale(1.05);z-index:5;box-shadow:0 12px 40px rgba(0,0,0,.5)}
-
-/* Live TV card */
-.card-live{width:220px;height:135px}
-.card-live-inner{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px;position:relative}
-.card-live-inner::before{content:'';position:absolute;top:8px;right:8px;width:8px;height:8px;background:var(--red);border-radius:50%;animation:pulse 2s infinite}
-.card-live img{max-height:36px;max-width:100px;object-fit:contain;margin-bottom:10px;filter:brightness(0) invert(1);opacity:.7}
-.card-live .card-name{font-size:13px;font-weight:600;text-align:center}
-.card-live .card-cat{font-size:10px;color:var(--muted);margin-top:4px}
-
-/* VOD card (poster) */
-.card-vod{width:165px;height:245px}
-.card-vod-inner{width:100%;height:100%;background-size:cover;background-position:center;position:relative}
-.card-vod-inner::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.8) 0%,transparent 50%);opacity:0;transition:opacity .25s}
-.card-vod:hover .card-vod-inner::after{opacity:1}
-.card-vod .card-meta{position:absolute;bottom:0;left:0;right:0;padding:12px;opacity:0;transform:translateY(8px);transition:all .25s var(--ease);z-index:2}
+.card{flex-shrink:0;border-radius:8px;overflow:hidden;cursor:pointer;transition:transform .2s var(--ease);background:var(--card)}
+.card:hover{transform:scale(1.06);z-index:5}
+.card-live{width:200px;height:120px}
+.card-live-in{width:100%;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;position:relative}
+.card-live-in::before{content:'';position:absolute;top:7px;right:7px;width:7px;height:7px;background:var(--red);border-radius:50%;animation:pulse 2s infinite}
+.card-live img{max-height:32px;max-width:90px;object-fit:contain;margin-bottom:8px}
+.cname{font-size:12px;font-weight:600;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;width:100%}
+.ccat{font-size:10px;color:var(--muted);margin-top:3px}
+.card-vod{width:155px;height:230px}
+.card-vod-in{width:100%;height:100%;background-size:cover;background-position:center;position:relative}
+.card-vod-in::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.75) 0%,transparent 50%);opacity:0;transition:.2s}
+.card-vod:hover .card-vod-in::after{opacity:1}
+.card-meta{position:absolute;bottom:0;left:0;right:0;padding:10px;opacity:0;transform:translateY(6px);transition:.2s;z-index:2}
 .card-vod:hover .card-meta{opacity:1;transform:translateY(0)}
-.card-vod .card-meta .card-name{font-size:12px;font-weight:700}
-.card-vod .card-meta .card-cat{font-size:10px;color:var(--muted);margin-top:3px}
-.card-vod .no-poster{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,#1a1a2e,#2d1b69)}
-
-/* Wide card */
-.card-wide{width:320px;height:180px}
-.card-wide-inner{width:100%;height:100%;background-size:cover;background-position:center;position:relative;display:flex;align-items:flex-end;padding:16px}
-.card-wide-inner::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.7) 0%,transparent 60%)}
-.card-wide .card-name{font-size:14px;font-weight:700;position:relative;z-index:2}
-.card-wide .card-cat{font-size:11px;color:rgba(255,255,255,.6);position:relative;z-index:2;margin-top:4px}
-
-/* ─── VIDEO PLAYER OVERLAY ─── */
-.player-overlay{display:none;position:fixed;inset:0;z-index:100;background:#000}
-.player-overlay.show{display:block}
-.player-overlay video{width:100%;height:100%;object-fit:contain}
-.player-close{position:fixed;top:20px;right:20px;z-index:101;width:44px;height:44px;background:rgba(0,0,0,.6);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.1);border-radius:12px;color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.2s;opacity:0}
-.player-overlay:hover .player-close{opacity:1}
-.player-close:hover{background:rgba(255,255,255,.15);transform:scale(1.05)}
-.player-info{position:fixed;bottom:0;left:0;right:0;z-index:101;padding:24px 48px 32px;background:linear-gradient(transparent,rgba(0,0,0,.85));opacity:0;transition:.3s}
-.player-overlay:hover .player-info{opacity:1}
-.player-ch-name{font-size:20px;font-weight:700;margin-bottom:6px}
-.player-ch-cat{font-size:13px;color:var(--muted)}
-.player-controls{display:flex;gap:12px;margin-top:16px}
-.player-ctrl-btn{padding:8px 20px;background:rgba(255,255,255,.1);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:var(--font);transition:.2s}
-.player-ctrl-btn:hover{background:rgba(255,255,255,.2)}
-.loading-spinner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3}
-.spinner{width:48px;height:48px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-
-/* Search overlay */
-.search-overlay{display:none;position:fixed;inset:0;z-index:80;background:rgba(6,6,10,.95);backdrop-filter:blur(20px)}
-.search-overlay.show{display:flex;flex-direction:column;align-items:center;padding-top:120px}
-.search-input{width:600px;max-width:90vw;padding:16px 24px;background:rgba(255,255,255,.06);border:1.5px solid var(--border);border-radius:14px;color:var(--text);font-size:18px;font-family:var(--font);outline:none;transition:.2s}
-.search-input:focus{border-color:var(--accent);box-shadow:0 0 30px var(--accent-glow)}
-.search-results{width:600px;max-width:90vw;margin-top:24px;max-height:60vh;overflow-y:auto}
-.search-item{display:flex;align-items:center;gap:16px;padding:12px 16px;border-radius:10px;cursor:pointer;transition:.15s}
-.search-item:hover{background:rgba(255,255,255,.04)}
-.search-item-icon{width:50px;height:36px;background:var(--card);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.search-item-name{font-size:14px;font-weight:600}
-.search-item-cat{font-size:11px;color:var(--muted);margin-top:2px}
-.search-close{position:fixed;top:24px;right:24px;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:18px}
-
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.card-meta .cname{font-size:11px;font-weight:700;text-align:left}
+.card-meta .ccat{font-size:9px;text-align:left}
+.no-poster{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(135deg,#1a1a2e,#2d1b69)}
+/* Banner */
+.sec-banner{padding:32px;border-radius:14px;margin-bottom:20px}
+/* Player Overlay */
+.player-ov{display:none;position:fixed;inset:0;z-index:100;background:#000}
+.player-ov.show{display:flex;flex-direction:column}
+.player-ov video{flex:1;width:100%;object-fit:contain;background:#000}
+.p-top{position:absolute;top:0;left:0;right:0;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);z-index:3;opacity:0;transition:.3s}
+.player-ov:hover .p-top,.player-ov:hover .p-bot,.player-ov:hover .p-ctrl{opacity:1}
+.p-close{width:36px;height:36px;background:rgba(255,255,255,.1);border:none;border-radius:8px;color:#fff;font-size:16px;cursor:pointer}
+.p-title{font-size:15px;font-weight:700}
+.p-sub{font-size:11px;color:var(--muted);margin-top:2px}
+/* Video Controls */
+.p-ctrl{position:absolute;bottom:60px;left:0;right:0;padding:0 24px;z-index:3;opacity:0;transition:.3s}
+.p-progress{width:100%;height:4px;background:rgba(255,255,255,.15);border-radius:2px;cursor:pointer;position:relative;margin-bottom:12px}
+.p-progress-fill{height:100%;background:var(--accent);border-radius:2px;width:0%;transition:width .1s}
+.p-btns{display:flex;align-items:center;gap:12px}
+.p-btn{background:none;border:none;color:#fff;font-size:18px;cursor:pointer;padding:4px}
+.p-time{font-size:11px;color:var(--muted);margin-left:auto}
+/* Bottom bar */
+.p-bot{position:absolute;bottom:0;left:0;right:0;z-index:3;opacity:0;transition:.3s}
+/* Ad Bar */
+.ad-bar{position:absolute;bottom:0;left:0;right:0;z-index:4;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;padding:6px;border-top:1px solid rgba(255,255,255,.05)}
+.ad-bar img{max-height:60px;max-width:728px;width:95%;object-fit:contain;border-radius:3px}
+.ad-bar .ad-x{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:22px;height:22px;background:rgba(255,255,255,.1);border:none;border-radius:4px;color:#fff;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ad-bar .ad-lbl{position:absolute;left:8px;top:50%;transform:translateY(-50%);font-size:8px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:1px}
+/* Series Detail */
+.series-detail{display:none;position:fixed;inset:0;z-index:90;background:var(--bg);overflow-y:auto}
+.series-detail.show{display:block}
+.sd-hero{height:45vh;position:relative;background-size:cover;background-position:center}
+.sd-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,var(--bg),transparent 60%)}
+.sd-ct{position:relative;padding:0 40px;margin-top:-80px;z-index:2}
+.sd-title{font-size:32px;font-weight:800;margin-bottom:8px}
+.sd-desc{font-size:13px;color:var(--muted);margin-bottom:16px;max-width:500px}
+.sd-seasons{display:flex;gap:6px;margin-bottom:20px}
+.sd-s-btn{padding:8px 18px;border:1px solid var(--border);background:none;color:var(--muted);border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:var(--font)}
+.sd-s-btn.active{background:var(--accent);border-color:var(--accent);color:#fff}
+.ep-list{display:flex;flex-direction:column;gap:8px;padding-bottom:40px}
+.ep-item{display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--card);border-radius:10px;cursor:pointer;transition:.2s}
+.ep-item:hover{background:rgba(124,92,252,.1)}
+.ep-num{width:32px;height:32px;background:rgba(255,255,255,.05);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.ep-info{flex:1}
+.ep-title{font-size:14px;font-weight:600}
+.ep-dur{font-size:11px;color:var(--muted);margin-top:2px}
+.ep-play{width:36px;height:36px;background:var(--accent);border:none;border-radius:8px;color:#fff;font-size:14px;cursor:pointer;flex-shrink:0}
+.sd-close{position:fixed;top:16px;right:16px;z-index:91;width:40px;height:40px;background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.spin{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:3}
+.spinner{width:44px;height:44px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-
-@media(max-width:768px){
-.topnav{padding:0 16px;gap:16px;height:56px}
-.nav-tabs{gap:0;overflow-x:auto;scrollbar-width:none}
-.nav-tab{padding:8px 12px;font-size:12px;white-space:nowrap}
-.hero{height:50vh;min-height:320px}
-.hero-content{bottom:60px;left:16px;right:16px}
-.hero-title{font-size:28px}
-.row{padding:0 16px;margin-bottom:28px}
-.content{padding-top:56px}
-.code-wrap{gap:8px}
-.code-seg{width:80px;height:56px;font-size:20px;letter-spacing:3px}
-}
+@media(max-width:768px){.topnav{padding:0 16px;gap:12px;height:52px}.nav-tab{padding:6px 10px;font-size:11px}.hero{height:45vh;min-height:280px}.hero-ct{bottom:50px;left:16px}.hero-title{font-size:24px}.row{padding:0 16px}.content{padding-top:52px}.code-seg{width:76px;height:52px;font-size:18px}}
 </style>
 </head>
 <body>
-
-<!-- ═══ ACTIVATION ═══ -->
+<!-- Activation -->
 <div class="act" id="actScreen">
 <div class="act-logo">FullIPTV</div>
 <div class="act-sub">Aktivasyon kodunuzu girin</div>
@@ -162,231 +135,157 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);cursor:defau
 <div class="act-dev">Cihaz: <span id="devId"></span></div>
 </div>
 
-<!-- ═══ MAIN APP ═══ -->
+<!-- App -->
 <div class="app" id="app">
-
-<!-- Top Navigation -->
-<div class="topnav" id="topnav">
+<div class="topnav">
 <div class="nav-logo">FullIPTV</div>
-<div class="nav-tabs" id="navTabs">
-<button class="nav-tab active" data-tab="home" onclick="switchTab('home',this)">Ana Sayfa</button>
-<button class="nav-tab" data-tab="live" onclick="switchTab('live',this)">Canlı TV</button>
-<button class="nav-tab" data-tab="movies" onclick="switchTab('movies',this)">Filmler</button>
-<button class="nav-tab" data-tab="series" onclick="switchTab('series',this)">Diziler</button>
-<button class="nav-tab" data-tab="kids" onclick="switchTab('kids',this)">Çocuklar</button>
+<div class="nav-tabs">
+<button class="nav-tab active" onclick="tab('home',this)">Ana Sayfa</button>
+<button class="nav-tab" onclick="tab('live',this)">Canlı TV</button>
+<button class="nav-tab" onclick="tab('movies',this)">Filmler</button>
+<button class="nav-tab" onclick="tab('series',this)">Diziler</button>
+<button class="nav-tab" onclick="tab('kids',this)">Çocuklar</button>
 </div>
-<div class="nav-right">
-<div class="nav-exp" id="navExp"></div>
-<button class="nav-search" onclick="toggleSearch()">🔍</button>
+<div class="nav-right"><div class="nav-exp" id="navExp"></div></div>
 </div>
-</div>
-
-<!-- Content -->
 <div class="content" id="content"></div>
-
 </div>
 
-<!-- ═══ VIDEO PLAYER ═══ -->
-<div class="player-overlay" id="playerOverlay">
-<button class="player-close" onclick="closePlayer()">✕</button>
-<video id="vid" autoplay playsinline></video>
-<div class="loading-spinner" id="vidLoading" style="display:none"><div class="spinner"></div></div>
-<div class="player-info">
-<div class="player-ch-name" id="pName"></div>
-<div class="player-ch-cat" id="pCat"></div>
-<div class="player-controls">
-<button class="player-ctrl-btn" onclick="prevChannel()">⏮ Önceki</button>
-<button class="player-ctrl-btn" onclick="nextChannel()">Sonraki ⏭</button>
-<button class="player-ctrl-btn" onclick="closePlayer()">✕ Kapat</button>
+<!-- Player -->
+<div class="player-ov" id="pov">
+<div class="p-top"><div><div class="p-title" id="pN"></div><div class="p-sub" id="pC"></div></div><button class="p-close" onclick="closeP()">✕</button></div>
+<video id="vid" autoplay playsinline onclick="togglePlay()"></video>
+<div class="spin" id="pLoad" style="display:none"><div class="spinner"></div></div>
+<div class="p-ctrl">
+<div class="p-progress" id="pProg" onclick="seek(event)"><div class="p-progress-fill" id="pFill"></div></div>
+<div class="p-btns"><button class="p-btn" onclick="prevCh()">⏮</button><button class="p-btn" id="pPlayBtn" onclick="togglePlay()">⏸</button><button class="p-btn" onclick="nextCh()">⏭</button><span class="p-time" id="pTime">0:00</span></div>
 </div>
-</div>
+<div class="ad-bar" id="adBar" style="display:none"><span class="ad-lbl">Reklam</span><img id="adImg"><button class="ad-x" onclick="E('adBar').style.display='none'">✕</button></div>
 </div>
 
-<!-- ═══ SEARCH ═══ -->
-<div class="search-overlay" id="searchOverlay">
-<button class="search-close" onclick="toggleSearch()">✕</button>
-<input class="search-input" id="searchInput" placeholder="Kanal, film veya dizi ara..." oninput="doSearch(this.value)">
-<div class="search-results" id="searchResults"></div>
+<!-- Series Detail -->
+<div class="series-detail" id="seriesDetail">
+<button class="sd-close" onclick="closeSeries()">✕</button>
+<div class="sd-hero" id="sdHero"></div>
+<div class="sd-ct">
+<h1 class="sd-title" id="sdTitle"></h1>
+<p class="sd-desc" id="sdDesc"></p>
+<div class="sd-seasons" id="sdSeasons"></div>
+<div class="ep-list" id="epList"></div>
+</div>
 </div>
 
 <script>
-const API=location.origin;
+const API=location.origin,E=id=>document.getElementById(id);
 let DID=localStorage.getItem('fiptv_did');
 if(!DID){DID='FTV-'+crypto.randomUUID().replace(/-/g,'').slice(0,20);localStorage.setItem('fiptv_did',DID)}
-document.getElementById('devId').textContent=DID;
+E('devId').textContent=DID;
+let channels=[],vods=[],series=[],ads=[],hls=null,cIdx=0;
 
-let channels=[],vods=[],hls=null,currentIdx=0,currentTab='home';
-
-const $=id=>document.getElementById(id);
-
-// ═══ AUTH ═══
-function autoTab(el,nxt){el.value=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(el.value.length===4)$(nxt)?.focus()}
-
+function autoTab(el,n){el.value=el.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(el.value.length===4)E(n)?.focus()}
 async function activate(){
-const code=[$('c1').value,$('c2').value,$('c3').value].join('-').toUpperCase();
-if(code.replace(/-/g,'').length!==12){$('actErr').textContent='Kodu eksiksiz girin';return}
-$('actBtn').disabled=true;$('actBtn').textContent='Kontrol ediliyor...';$('actErr').textContent='';
-try{
-const r=await fetch(API+'/api/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,device_id:DID,device_name:getDevName(),device_type:getDevType()})});
-const d=await r.json();
-if(d.success){localStorage.setItem('fiptv_act','1');localStorage.setItem('fiptv_exp',d.expires_at);$('actOk').textContent='✓ Aktif! Yönlendiriliyor...';setTimeout(startApp,800)}
-else $('actErr').textContent=d.error||'Başarısız';
-}catch(e){$('actErr').textContent='Bağlantı hatası'}
-$('actBtn').disabled=false;$('actBtn').textContent='Aktifleştir'}
-
-async function checkAuth(){
-if(!localStorage.getItem('fiptv_act'))return false;
-try{const r=await fetch(API+'/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_id:DID})});return(await r.json()).active}catch{return false}}
-
-// ═══ APP START ═══
+const code=[E('c1').value,E('c2').value,E('c3').value].join('-').toUpperCase();
+if(code.replace(/-/g,'').length!==12){E('actErr').textContent='Kodu eksiksiz girin';return}
+E('actBtn').disabled=true;E('actErr').textContent='';
+try{const r=await fetch(API+'/api/activate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code,device_id:DID,device_name:devName(),device_type:devType()})}).then(r=>r.json());
+if(r.success){localStorage.setItem('fiptv_act','1');localStorage.setItem('fiptv_exp',r.expires_at);E('actOk').textContent='Aktif!';setTimeout(startApp,600)}
+else E('actErr').textContent=r.error||'Basarisiz';}catch{E('actErr').textContent='Baglanti hatasi'}
+E('actBtn').disabled=false}
+async function checkAuth(){if(!localStorage.getItem('fiptv_act'))return false;try{return(await fetch(API+'/api/check',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({device_id:DID})}).then(r=>r.json())).active}catch{return false}}
 async function startApp(){
-$('actScreen').style.display='none';$('app').style.display='block';
-const exp=localStorage.getItem('fiptv_exp');
-if(exp)$('navExp').textContent='Bitiş: '+new Date(exp).toLocaleDateString('tr-TR');
+E('actScreen').style.display='none';E('app').style.display='block';
+const exp=localStorage.getItem('fiptv_exp');if(exp)E('navExp').textContent='Bitiş: '+new Date(exp).toLocaleDateString('tr-TR');
 await loadData();renderTab('home')}
-
 async function loadData(){
-try{
-const[chR,vodR]=await Promise.all([
-fetch(API+`/player_api.php?username=${DID}&password=x&action=get_live_streams`).then(r=>r.json()),
-fetch(API+`/player_api.php?username=${DID}&password=x&action=get_vod_streams`).then(r=>r.json()).catch(()=>[])
-]);
-channels=chR||[];vods=vodR||[]
-}catch(e){console.error(e)}}
+try{const[c,v,s,a]=await Promise.all([
+fetch(API+`/player_api.php?username=${DID}&password=x&action=get_live_streams`).then(r=>r.json()).catch(()=>[]),
+fetch(API+`/player_api.php?username=${DID}&password=x&action=get_vod_streams`).then(r=>r.json()).catch(()=>[]),
+fetch(API+'/api/series').then(r=>r.json()).catch(()=>[]),
+fetch(API+'/api/ads').then(r=>r.json()).catch(()=>[])
+]);channels=c;vods=v;series=s;ads=a}catch(e){console.error(e)}}
 
-// ═══ TABS & RENDERING ═══
-function switchTab(tab,el){
-document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
-el.classList.add('active');currentTab=tab;renderTab(tab);$('content').scrollTop=0}
+function tab(t,el){document.querySelectorAll('.nav-tab').forEach(n=>n.classList.remove('active'));el.classList.add('active');renderTab(t);E('content').scrollTop=0}
+function renderTab(t){const c=E('content');if(t==='home')c.innerHTML=rHome();else if(t==='live')c.innerHTML=rLive();else if(t==='movies')c.innerHTML=rMovies();else if(t==='series')c.innerHTML=rSeries();else if(t==='kids')c.innerHTML=rKids()}
 
-function renderTab(tab){
-const c=$('content');
-if(tab==='home')c.innerHTML=renderHome();
-else if(tab==='live')c.innerHTML=renderLive();
-else if(tab==='movies')c.innerHTML=renderMovies();
-else if(tab==='series')c.innerHTML=renderSeries();
-else if(tab==='kids')c.innerHTML=renderKids();
-bindCards()}
+// ═══ RENDERERS ═══
+function rHome(){
+const hImgs=['https://picsum.photos/seed/hero1/1600/800','https://picsum.photos/seed/hero2/1600/800','https://picsum.photos/seed/hero3/1600/800'];
+const featured=vods[0]||channels[0];
+let h=`<div class="hero"><div class="hero-bg" style="background-image:url('${hImgs[Math.floor(Math.random()*3)]}')"></div><div class="hero-grad"></div><div class="hero-ct"><div class="hero-badge">ÖNE ÇIKAN</div><h1 class="hero-title">${featured?.name||'FullIPTV'}</h1><p class="hero-desc">${channels.length} kanal, ${vods.length} film, ${series.length} dizi</p><button class="btn-play" onclick='play(${JSON.stringify(featured).replace(/'/g,"&apos;")})'>▶ İzle</button><button class="btn-info" onclick="tab('live',document.querySelectorAll('.nav-tab')[1])">Kanallar</button></div></div>`;
+h+=mkRow('🔴 Canlı TV',channels.slice(0,12).map(cLive).join(''));
+const grp=groupBy(channels,'category_name');
+Object.entries(grp).forEach(([g,cs])=>{h+=mkRow('📺 '+g,cs.map(cLive).join(''))});
+const films=vods.filter(v=>v.category_name==='Film');if(films.length)h+=mkRow('🎬 Filmler',films.map(cVod).join(''));
+if(series.length)h+=mkRow('📺 Diziler',series.map(cSeries).join(''));
+const kids=vods.filter(v=>v.category_name==='Cocuk');if(kids.length)h+=mkRow('🧸 Çocuklar',kids.map(cVod).join(''));
+return h+'<div style="height:60px"></div>'}
 
-function renderHome(){
-const liveGroups=groupBy(channels,'category_name');
-const heroChannel=channels[Math.floor(Math.random()*channels.length)];
-let html=renderHero(heroChannel);
-// Live TV row
-html+=makeRow('🔴 Canlı TV',channels.slice(0,15).map(cardLive).join(''));
-// By category
-Object.entries(liveGroups).slice(0,4).forEach(([g,chs])=>{html+=makeRow('📺 '+g,chs.map(cardLive).join(''))});
-// VOD
-if(vods.length){
-const movies=vods.filter(v=>(v.category_name||'').toLowerCase()!=='dizi');
-const series=vods.filter(v=>(v.category_name||'').toLowerCase()==='dizi');
-if(movies.length)html+=makeRow('🎬 Filmler',movies.map(cardVod).join(''));
-if(series.length)html+=makeRow('📺 Diziler',series.map(cardVod).join(''))}
-html+='<div style="height:60px"></div>';
-return html}
+function rLive(){const grp=groupBy(channels,'category_name');let h=`<div style="height:20px"></div><div class="row"><div class="sec-banner" style="background:linear-gradient(135deg,rgba(229,62,62,.2),rgba(15,15,30,.9)),url('https://picsum.photos/seed/liveban/1200/300');background-size:cover"><div style="font-size:24px;font-weight:800;margin-bottom:4px">🔴 Canlı TV</div><div style="color:rgba(255,255,255,.6);font-size:13px">${channels.length} kanal</div></div></div>`;
+Object.entries(grp).forEach(([g,cs])=>{h+=mkRow(g,cs.map(cLive).join(''))});return h+'<div style="height:60px"></div>'}
 
-function renderLive(){
-const groups=groupBy(channels,'category_name');
-let html='<div style="height:24px"></div>';
-Object.entries(groups).forEach(([g,chs])=>{html+=makeRow(g,chs.map(cardLive).join(''))});
-html+='<div style="height:60px"></div>';
-return html}
+function rMovies(){const f=vods.filter(v=>v.category_name==='Film');let h=`<div style="height:20px"></div><div class="row"><div class="sec-banner" style="background:linear-gradient(135deg,rgba(124,92,252,.2),rgba(15,15,30,.9)),url('https://picsum.photos/seed/movieban/1200/300');background-size:cover"><div style="font-size:24px;font-weight:800;margin-bottom:4px">🎬 Filmler</div><div style="color:rgba(255,255,255,.6);font-size:13px">${f.length} film</div></div></div>`;
+if(f.length)h+=mkRow('Tüm Filmler',f.map(cVod).join(''));else h+='<div class="row" style="color:var(--muted)">Admin panelden film ekleyin</div>';return h+'<div style="height:60px"></div>'}
 
-function renderMovies(){
-let items=vods.filter(v=>{const c=(v.category_name||'').toLowerCase();return c!=='dizi'&&c!=='cocuk'&&c!=='çocuk'&&c!=='kids'});
-if(!items.length)items=channels.filter(c=>(c.category_name||'').toLowerCase().includes('film')||c.category_name?.toLowerCase().includes('sinema'));
-let html='<div style="height:24px"></div>';
-if(items.length)html+=makeRow('Tüm Filmler',items.map(v=>v.stream_type==='movie'?cardVod(v):cardLive(v)).join(''));
-else html+='<div class="row"><div class="row-title">Henüz film eklenmedi</div><p style="color:var(--muted);font-size:14px">Admin panelinden VOD ekleyin veya M3U içe aktarın.</p></div>';
-html+='<div style="height:60px"></div>';
-return html}
+function rSeries(){let h=`<div style="height:20px"></div><div class="row"><div class="sec-banner" style="background:linear-gradient(135deg,rgba(236,72,153,.2),rgba(15,15,30,.9)),url('https://picsum.photos/seed/seriesban/1200/300');background-size:cover"><div style="font-size:24px;font-weight:800;margin-bottom:4px">📺 Diziler</div><div style="color:rgba(255,255,255,.6);font-size:13px">${series.length} dizi</div></div></div>`;
+if(series.length)h+=mkRow('Tüm Diziler',series.map(cSeries).join(''));else h+='<div class="row" style="color:var(--muted)">Henüz dizi eklenmedi</div>';return h+'<div style="height:60px"></div>'}
 
-function renderSeries(){
-let items=vods.filter(v=>(v.category_name||'').toLowerCase()==='dizi');
-let html='<div style="height:24px"></div>';
-if(items.length)html+=makeRow('Tüm Diziler',items.map(cardVod).join(''));
-else html+='<div class="row"><div class="row-title">Henüz dizi eklenmedi</div><p style="color:var(--muted);font-size:14px">Admin panelinden dizi kategorisinde VOD ekleyin.</p></div>';
-html+='<div style="height:60px"></div>';
-return html}
+function rKids(){const k=vods.filter(v=>v.category_name==='Cocuk');const kch=channels.filter(c=>(c.name+c.category_name).toLowerCase().includes('cocuk'));
+const ks=series.filter(s=>s.category==='Cocuk');
+let h=`<div style="height:20px"></div><div class="row"><div class="sec-banner" style="background:linear-gradient(135deg,#ff6b6b,#feca57,#48dbfb,#ff9ff3);padding:32px"><div style="font-size:24px;font-weight:800;margin-bottom:4px">🧸 Çocuklar İçin</div><div style="opacity:.8;font-size:13px">Güvenli ve eğlenceli içerikler</div></div></div>`;
+if(kch.length)h+=mkRow('📺 Çocuk Kanalları',kch.map(cLive).join(''));
+if(k.length)h+=mkRow('🎬 Çocuk Filmleri',k.map(cVod).join(''));
+if(ks.length)h+=mkRow('📺 Çocuk Dizileri',ks.map(cSeries).join(''));
+return h+'<div style="height:60px"></div>'}
 
-function renderKids(){
-let items=[...channels.filter(c=>{const n=(c.name+' '+c.category_name).toLowerCase();return n.includes('cocuk')||n.includes('çocuk')||n.includes('child')||n.includes('kid')||n.includes('cartoon')}),...vods.filter(v=>{const n=(v.name+' '+(v.category_name||'')).toLowerCase();return n.includes('cocuk')||n.includes('çocuk')||n.includes('kids')})];
-let html='<div style="height:24px"></div>';
-if(items.length){
-const live=items.filter(i=>i.stream_type==='live');const vod=items.filter(i=>i.stream_type==='movie');
-if(live.length)html+=makeRow('🧸 Çocuk Kanalları',live.map(cardLive).join(''));
-if(vod.length)html+=makeRow('🎬 Çocuk Filmleri',vod.map(cardVod).join(''))}
-else html+='<div class="row"><div class="row-title">🧸 Çocuk İçerikleri</div><p style="color:var(--muted);font-size:14px">TRT Çocuk ve diğer çocuk kanalları otomatik burada gösterilir.</p></div>';
-html+='<div style="height:60px"></div>';
-return html}
+// ═══ CARDS ═══
+function mkRow(t,cards){return`<div class="row"><div class="row-title">${t}</div><div class="row-scroll">${cards}</div></div>`}
+const colors=['#1a1a3e','#1e2a3a','#2a1a2e','#1a2e2a','#2e2a1a','#1a1e2e','#2e1a1a','#1a2e1e'];
+function hash(s){let h=0;for(let i=0;i<s.length;i++)h=((h<<5)-h)+s.charCodeAt(i);return Math.abs(h)}
+function cLive(ch){return`<div class="card card-live" onclick='play(${J(ch)})'><div class="card-live-in" style="background:${colors[hash(ch.name)%8]}">${ch.stream_icon?`<img src="${ch.stream_icon}" onerror="this.outerHTML='<div style=font-size:24px>📺</div>'">`:'<div style="font-size:24px;opacity:.4">📺</div>'}<div class="cname">${ch.name}</div><div class="ccat">${ch.category_name||''}</div></div></div>`}
+function cVod(v){const p=v.stream_icon||v.poster_url||'';return`<div class="card card-vod" onclick='play(${J(v)})'><div class="card-vod-in" style="${p?'background-image:url('+p+')':''}">${p?'':`<div class="no-poster">🎬</div>`}<div class="card-meta"><div class="cname">${v.name}</div><div class="ccat">${v.category_name||''}</div></div></div></div>`}
+function cSeries(s){return`<div class="card card-vod" onclick='openSeries(${J(s)})'><div class="card-vod-in" style="background-image:url(${s.poster_url||''})"><div class="card-meta"><div class="cname">${s.title}</div><div class="ccat">${s.seasons?.length||0} Sezon</div></div></div></div>`}
+function J(o){return JSON.stringify(o).replace(/'/g,"&apos;")}
 
-// ═══ COMPONENTS ═══
-function renderHero(ch){
-if(!ch)return'';
-return`<div class="hero"><div class="hero-bg" style="background:linear-gradient(135deg,#1a0a3e,#0a1628,#1a0a2e)"></div><div class="hero-gradient"></div><div class="hero-content"><div class="hero-badge">CANLI</div><h1 class="hero-title">${ch.name}</h1><p class="hero-desc">${ch.category_name} kategorisinde canlı yayın. FullIPTV ile ${channels.length} kanal ve ${vods.length} içerik keşfedin.</p><div class="hero-actions"><button class="btn-play" onclick='playItem(${JSON.stringify(ch).replace(/'/g,"\\'")})'> ▶ İzle</button><button class="btn-info" onclick="switchTab('live',document.querySelector('[data-tab=live]'))">Tüm Kanallar</button></div></div></div>`}
-
-function makeRow(title,cards){return`<div class="row"><div class="row-title">${title}</div><div class="row-scroll">${cards}</div></div>`}
-
-function cardLive(ch){
-return`<div class="card card-live" onclick='playItem(${JSON.stringify(ch).replace(/'/g,"\\'")})' title="${ch.name}"><div class="card-live-inner">${ch.stream_icon?`<img src="${ch.stream_icon}" onerror="this.style.display='none'" alt="">`:'<div style="font-size:28px;opacity:.5">📺</div>'}<div class="card-name">${ch.name}</div><div class="card-cat">${ch.category_name||''}</div></div></div>`}
-
-function cardVod(v){
-const poster=v.stream_icon||v.poster_url||'';
-return`<div class="card card-vod" onclick='playItem(${JSON.stringify(v).replace(/'/g,"\\'")})' title="${v.name}"><div class="card-vod-inner" style="${poster?'background-image:url('+poster+')':''}">${poster?'':`<div class="no-poster">🎬</div>`}<div class="card-meta"><div class="card-name">${v.name}</div><div class="card-cat">${v.category_name||''}</div></div></div></div>`}
-
-function bindCards(){/* future: lazy load images */}
+// ═══ SERIES DETAIL ═══
+let curSeries=null;
+function openSeries(s){curSeries=s;E('seriesDetail').classList.add('show');E('sdHero').style.backgroundImage=`url(${s.poster_url||''})`;E('sdTitle').textContent=s.title;E('sdDesc').textContent=s.description||'';
+E('sdSeasons').innerHTML=(s.seasons||[]).map((ss,i)=>`<button class="sd-s-btn ${i===0?'active':''}" onclick="showSeason(${i},this)">${ss.season}. Sezon</button>`).join('');
+if(s.seasons?.length)showSeasonEps(s.seasons[0])}
+function showSeason(i,el){document.querySelectorAll('.sd-s-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');showSeasonEps(curSeries.seasons[i])}
+function showSeasonEps(season){E('epList').innerHTML=season.episodes.map(ep=>`<div class="ep-item" onclick='play(${J({name:ep.title,direct_source:ep.stream_url,category_name:curSeries.title})})'><div class="ep-num">${ep.ep}</div><div class="ep-info"><div class="ep-title">${ep.title}</div><div class="ep-dur">${ep.duration||''}</div></div><button class="ep-play" onclick='event.stopPropagation();play(${J({name:ep.title,direct_source:ep.stream_url,category_name:curSeries.title})})'>▶</button></div>`).join('')}
+function closeSeries(){E('seriesDetail').classList.remove('show')}
 
 // ═══ PLAYER ═══
-function playItem(item){
+function play(item){
 const url=item.direct_source;if(!url)return;
-$('playerOverlay').classList.add('show');
-$('pName').textContent=item.name;
-$('pCat').textContent=item.category_name||'';
-$('vidLoading').style.display='flex';
-const video=$('vid');
-if(hls){hls.destroy();hls=null}
-if(url.includes('.m3u8')&&Hls.isSupported()){
-hls=new Hls({enableWorker:true,lowLatencyMode:true});
-hls.loadSource(url);hls.attachMedia(video);
-hls.on(Hls.Events.MANIFEST_PARSED,()=>{video.play().catch(()=>{});$('vidLoading').style.display='none'});
-hls.on(Hls.Events.ERROR,(_,d)=>{if(d.fatal)$('vidLoading').style.display='none'})}
-else if(video.canPlayType('application/vnd.apple.mpegurl')){video.src=url;video.play().catch(()=>{});video.onloadeddata=()=>$('vidLoading').style.display='none'}
-else{video.src=url;video.play().catch(()=>{});video.onloadeddata=()=>$('vidLoading').style.display='none'}
-currentIdx=channels.findIndex(c=>c.stream_id===item.stream_id);if(currentIdx<0)currentIdx=0}
+E('pov').classList.add('show');E('pN').textContent=item.name;E('pC').textContent=item.category_name||'';E('pLoad').style.display='flex';
+const v=E('vid');if(hls){hls.destroy();hls=null}
+if(url.includes('.m3u8')&&Hls.isSupported()){hls=new Hls({enableWorker:true});hls.loadSource(url);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,()=>{v.play().catch(()=>{});E('pLoad').style.display='none'});hls.on(Hls.Events.ERROR,(_,d)=>{if(d.fatal)E('pLoad').style.display='none'})}
+else{v.src=url;v.play().catch(()=>{});v.onloadeddata=()=>E('pLoad').style.display='none'}
+cIdx=channels.findIndex(c=>c.stream_id===item.stream_id);if(cIdx<0)cIdx=0;
+showAds()}
+function closeP(){E('pov').classList.remove('show');E('vid').pause();E('vid').src='';if(hls){hls.destroy();hls=null};E('adBar').style.display='none'}
+function prevCh(){if(channels.length<2)return;cIdx=(cIdx-1+channels.length)%channels.length;play(channels[cIdx])}
+function nextCh(){if(channels.length<2)return;cIdx=(cIdx+1)%channels.length;play(channels[cIdx])}
+function togglePlay(){const v=E('vid');if(v.paused){v.play();E('pPlayBtn').textContent='⏸'}else{v.pause();E('pPlayBtn').textContent='▶'}}
+function seek(e){const rect=E('pProg').getBoundingClientRect();const pct=(e.clientX-rect.left)/rect.width;E('vid').currentTime=pct*E('vid').duration}
+// Update progress bar
+setInterval(()=>{const v=E('vid');if(v.duration){E('pFill').style.width=(v.currentTime/v.duration*100)+'%';const m=Math.floor(v.currentTime/60),s=Math.floor(v.currentTime%60);E('pTime').textContent=`${m}:${s<10?'0':''}${s} / ${Math.floor(v.duration/60)}:${Math.floor(v.duration%60).toString().padStart(2,'0')}`}},500);
 
-function closePlayer(){$('playerOverlay').classList.remove('show');const v=$('vid');v.pause();v.src='';if(hls){hls.destroy();hls=null}}
-function prevChannel(){if(channels.length<2)return;currentIdx=(currentIdx-1+channels.length)%channels.length;playItem(channels[currentIdx])}
-function nextChannel(){if(channels.length<2)return;currentIdx=(currentIdx+1)%channels.length;playItem(channels[currentIdx])}
-
-// ═══ SEARCH ═══
-function toggleSearch(){const s=$('searchOverlay');s.classList.toggle('show');if(s.classList.contains('show'))$('searchInput').focus();else{$('searchInput').value='';$('searchResults').innerHTML=''}}
-function doSearch(q){
-if(!q||q.length<2){$('searchResults').innerHTML='';return}
-const ql=q.toLowerCase();
-const results=[...channels.filter(c=>c.name.toLowerCase().includes(ql)),...vods.filter(v=>v.name.toLowerCase().includes(ql))].slice(0,20);
-$('searchResults').innerHTML=results.map(r=>`<div class="search-item" onclick='toggleSearch();playItem(${JSON.stringify(r).replace(/'/g,"\\'")})'>
-<div class="search-item-icon">${r.stream_type==='movie'?'🎬':'📺'}</div>
-<div><div class="search-item-name">${r.name}</div><div class="search-item-cat">${r.category_name||''}</div></div></div>`).join('')||'<p style="color:var(--muted);padding:16px;text-align:center">Sonuç bulunamadı</p>'}
+// ═══ ADS ═══
+function showAds(){
+const active=ads.filter(a=>a.is_active);if(!active.length){E('adBar').style.display='none';return}
+const ad=active[Math.floor(Math.random()*active.length)];
+E('adImg').src=ad.image_url;E('adImg').onerror=()=>E('adBar').style.display='none';
+E('adBar').style.display='flex'}
 
 // ═══ KEYBOARD ═══
-document.addEventListener('keydown',e=>{
-if($('searchOverlay').classList.contains('show')){if(e.key==='Escape')toggleSearch();return}
-if(!$('playerOverlay').classList.contains('show'))return;
-if(e.key==='Escape'||e.key==='Backspace')closePlayer();
-if(e.key==='ArrowUp')prevChannel();
-if(e.key==='ArrowDown')nextChannel();
-if(e.key===' '||e.key==='Enter'){const v=$('vid');v.paused?v.play():v.pause()}})
+document.addEventListener('keydown',e=>{if(!E('pov').classList.contains('show'))return;if(e.key==='Escape')closeP();if(e.key==='ArrowUp')prevCh();if(e.key==='ArrowDown')nextCh();if(e.key===' ')togglePlay()});
 
-// ═══ SCROLL NAV ═══
-$('content')?.addEventListener('scroll',function(){$('topnav').classList.toggle('scrolled',this.scrollTop>40)});
-
-// ═══ UTILS ═══
-function groupBy(arr,key){return arr.reduce((g,i)=>{(g[i[key]]=g[i[key]]||[]).push(i);return g},{})}
-function getDevName(){const u=navigator.userAgent;if(u.includes('Tizen'))return'Samsung TV';if(u.includes('Web0S')||u.includes('webOS'))return'LG TV';if(u.includes('BRAVIA'))return'Sony TV';if(u.includes('Fire'))return'Fire TV';return'Web Browser'}
-function getDevType(){return screen.width>1200?'TV':'Mobile'}
-
-// ═══ INIT ═══
-(async()=>{if(await checkAuth())startApp();else $('actScreen').style.display='flex'})();
+function groupBy(a,k){return a.reduce((g,i)=>{(g[i[k]]=g[i[k]]||[]).push(i);return g},{})}
+function devName(){const u=navigator.userAgent;return u.includes('Tizen')?'Samsung TV':u.includes('Web0S')?'LG TV':u.includes('Fire')?'Fire TV':'Web Browser'}
+function devType(){return screen.width>1200?'TV':'Mobile'}
+(async()=>{if(await checkAuth())startApp();else E('actScreen').style.display='flex'})();
 </script>
 </body>
 </html>

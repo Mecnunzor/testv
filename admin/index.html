@@ -90,6 +90,7 @@ th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase}
     <a class="nav-item" onclick="showSection('devices')">📱 <span class="nav-text">Cihazlar</span></a>
     <a class="nav-item" onclick="showSection('channels')">📺 <span class="nav-text">Kanallar</span></a>
     <a class="nav-item" onclick="showSection('vod')">🎬 <span class="nav-text">VOD</span></a>
+    <a class="nav-item" onclick="showSection('ads')">📢 <span class="nav-text">Reklamlar</span></a>
     <a class="nav-item" onclick="showSection('import')">📥 <span class="nav-text">M3U İçe Aktar</span></a>
     <a class="nav-item" onclick="showSection('settings')">⚙️ <span class="nav-text">Ayarlar</span></a>
     <a class="nav-item" onclick="logout()" style="position:absolute;bottom:20px">🚪 <span class="nav-text">Çıkış</span></a>
@@ -147,6 +148,16 @@ th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase}
       <div class="header"><h1>Film & Dizi (VOD)</h1><button onclick="showAddVod()">+ VOD Ekle</button></div>
       <div class="card">
         <table><thead><tr><th>ID</th><th>Başlık</th><th>Kategori</th><th>Yıl</th><th></th></tr></thead><tbody id="vodTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- Ads -->
+    <div class="section" id="sec-ads">
+      <div class="header"><h1>Reklamlar</h1><button onclick="showAddAd()">+ Reklam Ekle</button></div>
+      <div class="card">
+        <h3>Banner Reklam Yönetimi</h3>
+        <p style="color:var(--muted);font-size:13px;margin-bottom:16px">Yayın izlenirken ekranda görünecek banner reklamları yönetin.</p>
+        <table><thead><tr><th>Başlık</th><th>Konum</th><th>Durum</th><th>Önizleme</th><th></th></tr></thead><tbody id="adsTable"></tbody></table>
       </div>
     </div>
 
@@ -218,6 +229,21 @@ http://stream-url.m3u8"></textarea>
   </div>
 </div>
 
+<!-- Add Ad Modal -->
+<div class="modal-overlay" id="adModal">
+  <div class="modal">
+    <h3>Reklam Ekle</h3>
+    <input type="text" id="adTitle" placeholder="Reklam başlığı">
+    <input type="text" id="adImage" placeholder="Resim URL (728x90 banner)">
+    <input type="text" id="adLink" placeholder="Tıklama linki (opsiyonel)">
+    <select id="adPosition"><option value="bottom">Alt</option><option value="top">Üst</option></select>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+      <button onclick="closeModal('adModal')" style="background:var(--border)">İptal</button>
+      <button onclick="addAd()">Ekle</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const API = location.origin;
 let TOKEN = localStorage.getItem('fulliptv_token');
@@ -250,6 +276,7 @@ function showSection(name) {
   if (name === 'devices') loadDevices();
   if (name === 'channels') loadChannels();
   if (name === 'vod') loadVod();
+  if (name === 'ads') loadAds();
   if (name === 'settings') { E('setServer').textContent = API; E('setApi').textContent = API + '/player_api.php'; E('setM3u').textContent = API + '/get.php?username=DEVICE_ID&password=CODE&type=m3u_plus'; }
 }
 
@@ -349,6 +376,28 @@ async function addVod() {
 }
 
 async function deleteVod(id) { if (confirm('Silmek istediğinize emin misiniz?')) { await api('/api/admin/vod/' + id, { method: 'DELETE' }); loadVod(); } }
+
+async function loadAds() {
+  const ads = await api('/api/admin/ads');
+  if (!ads) return;
+  E('adsTable').innerHTML = ads.map(a => `<tr>
+    <td style="font-weight:600">${a.title}</td>
+    <td>${a.position==='top'?'Üst':'Alt'}</td>
+    <td>${a.is_active?'<span class="badge badge-green">Aktif</span>':'<span class="badge badge-red">Pasif</span>'}</td>
+    <td>${a.image_url?'<img src="'+a.image_url+'" style="height:28px;border-radius:4px;max-width:140px">':'-'}</td>
+    <td>
+      <button class="btn-sm ${a.is_active?'btn-amber':'btn-success'}" onclick="toggleAd('${a.id}')">${a.is_active?'Durdur':'Aktif'}</button>
+      <button class="btn-sm btn-danger" onclick="deleteAd('${a.id}')">Sil</button>
+    </td>
+  </tr>`).join('') || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:20px">Henüz reklam eklenmedi</td></tr>';
+}
+function showAddAd() { E('adModal').classList.add('show'); }
+async function addAd() {
+  await api('/api/admin/ads', { method: 'POST', body: JSON.stringify({ title:E('adTitle').value, image_url:E('adImage').value, link_url:E('adLink').value, position:E('adPosition').value, display_mode:'always', duration_seconds:0 })});
+  closeModal('adModal'); loadAds(); E('adTitle').value=''; E('adImage').value=''; E('adLink').value='';
+}
+async function toggleAd(id) { await api('/api/admin/ads/'+id+'/toggle',{method:'POST'}); loadAds(); }
+async function deleteAd(id) { if(confirm('Reklamı silmek istediğinize emin misiniz?')) { await api('/api/admin/ads/'+id,{method:'DELETE'}); loadAds(); } }
 
 async function importM3U() {
   const r = await api('/api/admin/import-m3u', { method: 'POST', body: JSON.stringify({ m3u_content: E('m3uContent').value }) });

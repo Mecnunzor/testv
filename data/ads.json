@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Otel Spa Promosyon",
+    "image_url": "https://placehold.co/728x90/7c5cfc/ffffff?text=SPA+%26+WELLNESS+%7C+%2550+INDIRIM+%7C+Rezervasyon+icin+resepsiyonu+arayin",
+    "link_url": "",
+    "position": "bottom",
+    "display_mode": "always",
+    "interval_minutes": 0,
+    "duration_seconds": 0,
+    "is_active": false,
+    "id": "mnn98ccmjy7bwq",
+    "created_at": "2026-04-06T13:57:11.686Z"
+  },
+  {
+    "title": "Restoran Menusu",
+    "image_url": "https://placehold.co/728x90/e53e3e/ffffff?text=ROOF+RESTAURANT+%7C+Aksam+Yemegi+%7C+18.00+-+23.00",
+    "link_url": "",
+    "position": "bottom",
+    "display_mode": "always",
+    "interval_minutes": 0,
+    "duration_seconds": 0,
+    "is_active": false,
+    "id": "mnn98ccm73xx19",
+    "created_at": "2026-04-06T13:57:11.686Z"
+  },
+  {
+    "title": "Nefa",
+    "image_url": "https://i.ibb.co/kr1S3xD/Ads-z-tasar-m-2026-04-06-T165926-015.png",
+    "link_url": "",
+    "position": "bottom",
+    "display_mode": "always",
+    "duration_seconds": 0,
+    "is_active": true,
+    "id": "mnn9dye9imv89t",
+    "created_at": "2026-04-06T14:01:33.537Z"
+  }
+]
